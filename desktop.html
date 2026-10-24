@@ -1,0 +1,2535 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>רבאט, סלא וקזבלנקה: מסלול אדריכלות, אלמוהאדים, אר-דקו וזאהה חדיד (06/11 10:30 - 08/11 14:05)</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';document.head.appendChild(s);"></script>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --header-bg: #ffffff;
+    --card: #ffffff;
+    --card-hover: #f1f5f9;
+    --text: #0f172a;
+    --muted: #475569;
+    --border: #cbd5e1;
+    --primary: #1d4ed8;
+    --primary-text: #ffffff;
+    --accent: #0369a1;
+    --photo-bg: #f3e8ff;
+    --photo-text: #581c87;
+    --story-bg: #ecfdf5;
+    --story-text: #065f46;
+    --badge-t1-bg: #fef3c7;
+    --badge-t1-text: #92400e;
+    --badge-t2-bg: #e0f2fe;
+    --badge-t2-text: #075985;
+    --day1: #059669;
+    --day2: #d97706;
+    --day3: #0284c7;
+    --day4: #db2777;
+  }
+  body.night-mode, :root[data-theme="dark"] body {
+    --bg: #0f172a;
+    --surface: #111827;
+    --header-bg: #020617;
+    --card: #1e293b;
+    --card-hover: #334155;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: #334155;
+    --primary: #2563eb;
+    --primary-text: #ffffff;
+    --accent: #38bdf8;
+    --photo-bg: #2e1065;
+    --photo-text: #e9d5ff;
+    --story-bg: rgba(16, 185, 129, 0.16);
+    --story-text: #a7f3d0;
+    --badge-t1-bg: #78350f;
+    --badge-t1-text: #fef3c7;
+    --badge-t2-bg: #0c4a6e;
+    --badge-t2-text: #e0f2fe;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    z-index: 1000;
+  }
+  .header-title h1 {
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .header-title p {
+    font-size: 0.79rem;
+    color: var(--muted);
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    position: relative;
+    background: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid transparent;
+    padding: 7px 12px;
+    min-height: 44px;
+    min-width: 44px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .btn:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .btn-secondary {
+    background: var(--card);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .btn-secondary[aria-pressed="true"] {
+    background: var(--primary);
+    color: var(--primary-text);
+    border-color: var(--primary);
+  }
+  .lang-switch-group {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--card);
+  }
+  .lang-switch-group .btn {
+    border-radius: 0;
+    border: none;
+    padding: 6px 10px;
+  }
+  .main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  .sidebar {
+    width: 58%;
+    max-width: 900px;
+    overflow-y: auto;
+    padding: 14px 16px;
+    border-inline-end: 1px solid var(--border);
+  }
+  .map-pane {
+    flex: 1;
+    position: relative;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    min-height: 420px;
+  }
+  .map-mode-bar {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+  }
+  #map {
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    flex: 1;
+  }
+  #svg-fallback {
+    display: none;
+    width: 100%;
+    flex: 1;
+    padding: 12px;
+    background: var(--bg);
+    overflow: auto;
+  }
+  .audio-studio-card {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+  .audio-studio-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .audio-studio-top h2 {
+    font-size: 0.95rem;
+    color: var(--accent);
+    font-weight: 800;
+  }
+  .audio-mode-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .audio-track-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .audio-track-box h3 {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .audio-track-box p {
+    font-size: 0.76rem;
+    color: var(--muted);
+  }
+  .audio-controls-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 4px;
+  }
+  .caption-live-box {
+    margin-top: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 0.82rem;
+    color: var(--text);
+    display: none;
+  }
+  .caption-live-box.visible {
+    display: block;
+  }
+  .day-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .day-tab {
+    position: relative;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 7px 11px;
+    min-height: 44px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .day-tab[aria-pressed="true"] {
+    background: var(--primary);
+    color: var(--primary-text);
+    border-color: var(--primary);
+  }
+  .logistics-banner {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-inline-start: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 0.8rem;
+  }
+  .logistics-banner h2 {
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .story-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .story-mini-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 0.77rem;
+  }
+  .story-mini-card strong {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .day-section {
+    margin-bottom: 18px;
+  }
+  .day-header {
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .stop-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  }
+  .stop-card:hover {
+    background: var(--card-hover);
+  }
+  .stop-card.speaking-active {
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.55), 0 8px 24px rgba(245, 158, 11, 0.22);
+    background: rgba(245, 158, 11, 0.10) !important;
+    transform: translateY(-1px);
+    transition: all 0.25s ease;
+  }
+  .now-playing-pill {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    background: #f59e0b;
+    color: #0f172a;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .stop-card.speaking-active .now-playing-pill {
+    display: inline-flex;
+  }
+  @keyframes pulseSpeakingPin {
+    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.9), 0 0 0 4px #ffffff; transform: scale(1.18); }
+    70% { box-shadow: 0 0 0 16px rgba(245, 158, 11, 0), 0 0 0 4px #ffffff; transform: scale(1.26); }
+    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0), 0 0 0 4px #ffffff; transform: scale(1.18); }
+  }
+  .pin-speaking-active {
+    animation: pulseSpeakingPin 1.4s infinite !important;
+    background: #f59e0b !important;
+    color: #0f172a !important;
+    border: 3px solid #ffffff !important;
+    z-index: 9999 !important;
+  }
+  .jump-stop-chip {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 7px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .jump-stop-chip:hover {
+    border-color: var(--accent);
+  }
+  .jump-stop-chip[aria-pressed="true"] {
+    background: #f59e0b;
+    color: #0f172a;
+    border-color: #f59e0b;
+    font-weight: 800;
+  }
+  .stop-card.tier-1 {
+    border-inline-start: 4px solid #f59e0b;
+  }
+  .stop-card.tier-2 {
+    border-inline-start: 4px solid #0284c7;
+  }
+  .stop-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .stop-title-btn {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-weight: 800;
+    font-size: 0.89rem;
+    cursor: pointer;
+    text-align: start;
+    padding: 4px 0;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stop-actions-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .btn-stop-speak {
+    position: relative;
+    background: var(--surface);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    min-height: 44px;
+    min-width: 44px;
+    font-size: 0.73rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-stop-speak[aria-pressed="true"] {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+  }
+  .badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .badge-t1 {
+    background: var(--badge-t1-bg);
+    color: var(--badge-t1-text);
+  }
+  .badge-t2 {
+    background: var(--badge-t2-bg);
+    color: var(--badge-t2-text);
+  }
+  .wow-line {
+    background: var(--story-bg);
+    color: var(--story-text);
+    font-size: 0.77rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+  }
+  .photo-line {
+    background: var(--photo-bg);
+    color: var(--photo-text);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+  }
+  .move-line {
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ext-links {
+    display: inline-flex;
+    gap: 10px;
+  }
+  .ext-links a {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.76rem;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .graveyard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+  .graveyard-table th, .graveyard-table td {
+    border: 1px solid var(--border);
+    padding: 7px 9px;
+    text-align: start;
+  }
+  .graveyard-table th {
+    background: var(--card-hover);
+    font-weight: 800;
+  }
+  audio {
+    width: 100%;
+    height: 36px;
+    margin-top: 4px;
+  }
+  @media (max-width: 900px) {
+    .main-container { flex-direction: column; }
+    .sidebar { width: 100%; max-width: 100%; height: 58%; border-inline-end: none; border-bottom: 1px solid var(--border); }
+    .map-pane { height: 42%; }
+  }
+</style>
+<!-- ELADB_UNIVERSAL_THEME_CSS_START -->
+<style>
+  :root[data-theme="dark"] {
+    --bg: #0b1120 !important;
+    --background: #0b1120 !important;
+    --surface: #111827 !important;
+    --header-bg: #111827 !important;
+    --card: #111827 !important;
+    --card-hover: #1e293b !important;
+    --text: #f8fafc !important;
+    --muted: #cbd5e1 !important;
+    --border: #334155 !important;
+    --primary: #2563eb !important;
+    --accent: #60a5fa !important;
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --header-bg: #ffffff;
+    --card: #ffffff;
+    --card-hover: #f1f5f9;
+    --text: #0f172a;
+    --muted: #475569;
+    --border: #cbd5e1;
+    --primary: #1d4ed8;
+    --accent: #0369a1;
+    color-scheme: light;
+  }
+</style>
+<!-- ELADB_UNIVERSAL_THEME_CSS_END -->
+<!-- ELADB_AUTO_DARK_SURFACES_START -->
+<style>
+  :root[data-theme="dark"] [style*="background: #eff6ff"],
+  :root[data-theme="dark"] [style*="background:#eff6ff"],
+  :root[data-theme="dark"] [style*="background-color: #eff6ff"],
+  :root[data-theme="dark"] [style*="background-color:#eff6ff"],
+  :root[data-theme="dark"] [style*="background: #ecfdf5"],
+  :root[data-theme="dark"] [style*="background:#ecfdf5"],
+  :root[data-theme="dark"] [style*="background-color: #ecfdf5"],
+  :root[data-theme="dark"] [style*="background-color:#ecfdf5"] {
+    background: #111827 !important; color: #f8fafc !important; border-color: #334155 !important;
+  }
+  :root[data-theme="dark"] [style*="background: #f3e8ff"],
+  :root[data-theme="dark"] [style*="background:#f3e8ff"],
+  :root[data-theme="dark"] [style*="background-color: #f3e8ff"],
+  :root[data-theme="dark"] [style*="background-color:#f3e8ff"] {
+    background: rgba(168, 85, 247, 0.18) !important; color: #d8b4fe !important; border-color: rgba(192, 132, 252, 0.4) !important;
+  }
+  :root[data-theme="dark"] [style*="color: #137333"],
+  :root[data-theme="dark"] [style*="color:#137333"],
+  :root[data-theme="dark"] [style*="color: #065f46"] {
+    color: #86efac !important;
+  }
+  :root[data-theme="dark"] [style*="color: #6a1b9a"],
+  :root[data-theme="dark"] [style*="color:#6a1b9a"],
+  :root[data-theme="dark"] [style*="color: #6b21a8"] {
+    color: #d8b4fe !important;
+  }
+  :root[data-theme="dark"] [style*="color: #795548"],
+  :root[data-theme="dark"] [style*="color: #92400e"] {
+    color: #fcd34d !important;
+  }
+</style>
+<!-- ELADB_AUTO_DARK_SURFACES_END -->
+</head>
+<body class="night-mode">
+  <div class="eladb-golink-topbar" dir="ltr" style="max-width:1200px;margin:8px auto 0;padding:0 16px;display:flex;justify-content:flex-end;"><!-- ELADB_GOLINK_BADGE_START --><a href="http://go/rba-trip-he" target="_blank" rel="noopener" class="eladb-golink-badge" data-golink-badge="go/rba-trip-he" title="Shortlink: http://go/rba-trip-he (Click to copy or open)" onclick="if(navigator.clipboard){navigator.clipboard.writeText('http://go/rba-trip-he');}" style="display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:4px 11px;border-radius:999px;background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-family:monospace;font-size:12.5px;font-weight:700;text-decoration:none;white-space:nowrap;box-sizing:border-box;">🔗 go/rba-trip-he</a><!-- ELADB_GOLINK_BADGE_END --></div>
+
+<body class="night-mode">
+<header>
+  <div class="header-title">
+    <h1 id="hdr-title" data-he="רבאט, סלא וקזבלנקה: מסלול אדריכלות, אלמוהאדים, אר-דקו וזאהה חדיד (06/11 10:30 - 08/11 14:05)" data-en="Rabat, Salé &amp; Casablanca: Almohad Monuments, Art Deco &amp; Zaha Hadid (06/11 10:30 - 08/11 14:05)">רבאט, סלא וקזבלנקה: מסלול אדריכלות, אלמוהאדים, אר-דקו וזאהה חדיד (06/11 10:30 - 08/11 14:05)</h1>
+    <p id="hdr-sub" data-he="טיסות Ryanair מאומתות: הלוך שישי 06/11 FR162 (07:05-&gt;10:30) | חזור ראשון 08/11 FR163 (14:05-&gt;17:30) | 2 לילות ברבאט + ספרינט רכבת מהירה לקזבלנקה" data-en="Verified Ryanair Flights: Out Fri 06/11 FR162 (07:05-&gt;10:30) | Back Sun 08/11 FR163 (14:05-&gt;17:30) | 2 Nights in Rabat + Pocket-Only Rail Sprint to Casablanca">טיסות Ryanair מאומתות: הלוך שישי 06/11 FR162 (07:05-&gt;10:30) | חזור ראשון 08/11 FR163 (14:05-&gt;17:30) | 2 לילות ברבאט + ספרינט רכבת מהירה לקזבלנקה</p>
+  </div>
+  <div class="header-actions">
+    <a href="travel_and_offices_hub.html" class="btn btn-secondary" data-he="✈️ חזרה לפורטל הטיולים" data-en="✈️ Back to Travel Hub">✈️ חזרה לפורטל הטיולים</a>
+    <div class="lang-switch-group" role="group" aria-label="Language Switcher">
+      <button type="button" id="langBtnHe" class="btn btn-secondary" aria-pressed="true" onclick="setLanguage('he')">🇮🇱 עברית (L)</button>
+      <button type="button" id="langBtnEn" class="btn btn-secondary" aria-pressed="false" onclick="setLanguage('en')">🇬🇧 English (L)</button>
+    </div>
+    <button type="button" id="btn-theme" class="btn btn-secondary" aria-pressed="true" onclick="toggleTheme()">☀️ מצב יום (D)</button>
+    <button type="button" id="btn-map-leaflet" class="btn btn-secondary" aria-pressed="true" onclick="switchMapDisplay('leaflet')" data-he="🗺️ מפת Leaflet חיה" data-en="🗺️ Live Leaflet Map">🗺️ מפת Leaflet חיה</button>
+    <button type="button" id="btn-map-svg" class="btn btn-secondary" aria-pressed="false" onclick="switchMapDisplay('svg')" data-he="📐 מפת וקטור Offline" data-en="📐 Offline Vector Map">📐 מפת וקטור Offline</button>
+  </div>
+</header>
+
+<div class="main-container">
+  <main class="sidebar" id="itinerary-sidebar">
+
+    <!-- AUDIO NARRATOR & OFFLINE MP3 STUDIO -->
+    <section class="audio-studio-card" aria-label="מדריך קולי להאזנה ולהורדה לטיסה">
+      <div class="audio-studio-top">
+        <h2 data-he="🎧 אולפן קריינות דו-לשוני, שליטה במהירות והורדת MP3 למטוס (עברית / English)" data-en="🎧 Bilingual Audio Tour, Speed Control &amp; Offline In-Flight MP3 Downloads (EN / HE)">🎧 אולפן קריינות דו-לשוני, שליטה במהירות והורדת MP3 למטוס (עברית / English)</h2>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <button type="button" id="btn-tts-short" class="btn" aria-pressed="false" onclick="startLiveNarrator('short')" data-he="▶️ קריין חי: מדריך מעשי לכל 12 התחנות (16.6 דק׳)" data-en="▶️ Live Voice: Practical 12-Stop Guide (13.9m)">▶️ קריין חי: מדריך מעשי לכל 12 התחנות (16.6 דק׳)</button>
+          <button type="button" id="btn-tts-flight" class="btn btn-secondary" aria-pressed="false" onclick="startLiveNarrator('flight')" data-he="✈️ קריין חי: מהדורת טיסה וסיפורים (27.4 דק׳)" data-en="✈️ Live Voice: Full In-Flight Storytelling (22.9m)">✈️ קריין חי: מהדורת טיסה וסיפורים (27.4 דק׳)</button>
+          <button type="button" id="btn-tts-stop" class="btn btn-secondary" onclick="stopLiveNarrator()" data-he="⏹️ עצור" data-en="⏹️ Stop">⏹️ עצור</button>
+          <button type="button" id="btn-cc-toggle" class="btn btn-secondary" aria-pressed="true" onclick="toggleCaptions()" data-he="💬 כתוביות: פעיל" data-en="💬 CC: ON">💬 כתוביות: פעיל</button>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;" role="group" aria-label="Audio Playback Speed">
+        <strong style="font-size:0.78rem;color:var(--accent);" data-he="⏩ מהירות ניגון וקריינות (עברית + English):" data-en="⏩ Playback &amp; Voice Speed (EN + HE):">⏩ מהירות ניגון וקריינות (עברית + English):</strong>
+        <button type="button" class="btn btn-secondary speed-btn" data-speed="1" aria-pressed="true" onclick="setAudioSpeed(1)">1x</button>
+        <button type="button" class="btn btn-secondary speed-btn" data-speed="1.25" aria-pressed="false" onclick="setAudioSpeed(1.25)">1.25x</button>
+        <button type="button" class="btn btn-secondary speed-btn" data-speed="1.5" aria-pressed="false" onclick="setAudioSpeed(1.5)">1.5x</button>
+        <button type="button" class="btn btn-secondary speed-btn" data-speed="1.75" aria-pressed="false" onclick="setAudioSpeed(1.75)">1.75x</button>
+        <button type="button" class="btn btn-secondary speed-btn" data-speed="2" aria-pressed="false" onclick="setAudioSpeed(2)">2x 🚀</button>
+        <span id="speed-status-badge" style="font-size:0.75rem;color:var(--muted);margin-inline-start:auto;" data-he="חל על שני נגני ה-MP3 ועל הקריינות החיה בכל התחנות" data-en="Applies to both MP3 players &amp; live stop narration in both languages">חל על שני נגני ה-MP3 ועל הקריינות החיה בכל התחנות</span>
+      </div>
+
+      <div id="audio-stop-jump-bar" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:8px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;" role="group" aria-label="סנכרון וקפיצה לתחנה באודיו ובמפה">
+        <strong style="font-size:0.75rem;color:var(--accent);margin-inline-end:4px;" data-he="📍 סנכרון חי למפה ולתחנה (לחץ לקפיצה באודיו):" data-en="📍 Live Audio-to-Map Sync (Click to jump to stop):">📍 סנכרון חי למפה ולתחנה (לחץ לקפיצה באודיו):</strong>
+        <button type="button" class="jump-stop-chip" id="jump-chip-intro" aria-pressed="false" onclick="jumpAudioToStop(0)" data-he="פתיחה" data-en="Intro">פתיחה</button>
+        <span id="jump-chips-container" style="display:inline-flex;flex-wrap:wrap;gap:4px;"></span>
+      </div>
+      <div id="live-caption-box" class="caption-live-box visible" aria-live="polite" aria-atomic="true">
+        <span id="live-caption-text" data-he="לחץ על 'קריין חי' למעלה, בחר מהירות (1x עד 2x), או לחץ על 🔊 בכל אחת מ-12 התחנות למטה להאזנה נקודתית, או הורד קובץ MP3 רגיל (1x) או מואץ מראש (2x) למטוס." data-en="Click 'Live Voice' above, choose speed (1x to 2x), click 🔊 on any of the 12 stops below, or download 1x or pre-accelerated 2x offline MP3s for your flight.">לחץ על 'קריין חי' למעלה, בחר מהירות (1x עד 2x), או לחץ על 🔊 בכל אחת מ-12 התחנות למטה להאזנה נקודתית, או הורד קובץ MP3 רגיל (1x) או מואץ מראש (2x) למטוס.</span>
+      </div>
+
+      <div class="audio-grid">
+        <div class="audio-track-box">
+          <h3 data-he="⚡ גרסה 1: מדריך מעשי ממוקד תחנה-תחנה (16.6 דק׳ ב-1x | 8.3 דק׳ ב-2x)" data-en="⚡ Track 1: Practical Stop-by-Stop Guide (13.9m at 1x | 6.9m at 2x)">⚡ גרסה 1: מדריך מעשי ממוקד תחנה-תחנה (16.6 דק׳ ב-1x | 8.3 דק׳ ב-2x)</h3>
+          <p data-he="עובר ברצף על כללי הזהב וכל 12 התחנות: עלות, פנים מול חוץ, כמה זמן להקדיש, על מה לדלג בבלת״ם, זוויות צילום והגעה." data-en="Covers all golden rules and all 12 stops: cost, Inside-vs-Outside verdict, recommended duration, skip-if-delayed priority, smartphone angles &amp; transit.">עובר ברצף על כללי הזהב וכל 12 התחנות: עלות, פנים מול חוץ, כמה זמן להקדיש, על מה לדלג בבלת״ם, זוויות צילום והגעה.</p>
+          <audio id="audio-player-short" controls preload="metadata" src="audio/rba_trip_short_he.mp3"></audio>
+          <div class="audio-controls-row">
+            <a id="dl-short-he" class="btn btn-secondary" href="audio/rba_trip_short_he.mp3" download="rba_trip_short_he.mp3">⬇️ MP3 מעשי עברית 1x (16.6m, 7.6MB)</a>
+            <a id="dl-short-he-2x" class="btn" href="audio/rba_trip_short_he_2x.mp3" download="rba_trip_short_he_2x.mp3">⚡ הורדה עברית x2 (8.3m, 1.9MB)</a>
+          </div>
+          <div class="audio-controls-row">
+            <a id="dl-short-en" class="btn btn-secondary" href="audio/rba_trip_short_en.mp3" download="rba_trip_short_en.mp3">⬇️ MP3 Practical EN 1x (13.9m, 6.3MB)</a>
+            <a id="dl-short-en-2x" class="btn" href="audio/rba_trip_short_en_2x.mp3" download="rba_trip_short_en_2x.mp3">⚡ Download EN x2 (6.9m, 1.6MB)</a>
+          </div>
+        </div>
+
+        <div class="audio-track-box">
+          <h3 data-he="✈️ גרסה 2: מהדורת טיסה וסיפורים פיקנטיים (27.4 דק׳ ב-1x | 13.7 דק׳ ב-2x)" data-en="✈️ Track 2: In-Flight Storytelling &amp; Deep-Dive (22.9m at 1x | 11.4m at 2x)">✈️ גרסה 2: מהדורת טיסה וסיפורים פיקנטיים (27.4 דק׳ ב-1x | 13.7 דק׳ ב-2x)</h3>
+          <p data-he="מותאם להאזנה בעיניים עצומות בטיסה: רקע היסטורי וסיפורים פיקנטיים, פירוט מה רואים על הדרך, ועבור כל 12 התחנות: עלות, פנים מול חוץ, משך שהייה, עדיפות בבלת״ם וזוויות צילום." data-en="Designed for listening on the plane with eyes closed: spicy historical stories, en-route sights, plus cost, Inside-vs-Outside verdict, duration, priority &amp; photo angles for all 12 stops.">מותאם להאזנה בעיניים עצומות בטיסה: רקע היסטורי וסיפורים פיקנטיים, פירוט מה רואים על הדרך, ועבור כל 12 התחנות: עלות, פנים מול חוץ, משך שהייה, עדיפות בבלת״ם וזוויות צילום.</p>
+          <audio id="audio-player-flight" controls preload="metadata" src="audio/rba_trip_flight_he.mp3"></audio>
+          <div class="audio-controls-row">
+            <a id="dl-flight-he" class="btn btn-secondary" href="audio/rba_trip_flight_he.mp3" download="rba_trip_flight_he.mp3">⬇️ MP3 טיסה עברית 1x (27.4m, 12.6MB)</a>
+            <a id="dl-flight-he-2x" class="btn" href="audio/rba_trip_flight_he_2x.mp3" download="rba_trip_flight_he_2x.mp3">⚡ הורדה טיסה עברית x2 (13.7m, 3.1MB)</a>
+          </div>
+          <div class="audio-controls-row">
+            <a id="dl-flight-en" class="btn btn-secondary" href="audio/rba_trip_flight_en.mp3" download="rba_trip_flight_en.mp3">⬇️ MP3 Flight EN 1x (22.9m, 10.5MB)</a>
+            <a id="dl-flight-en-2x" class="btn" href="audio/rba_trip_flight_en_2x.mp3" download="rba_trip_flight_en_2x.mp3">⚡ Download Flight EN x2 (11.4m, 2.6MB)</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CITY BACKGROUND & SPICY STORIES -->
+    <section class="logistics-banner" aria-label="רקע היסטורי וסיפורים פיקנטיים">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+        <h2 data-he="🏛️ רקע על רבאט וקזבלנקה ו-4 סיפורים פיקנטיים שמשנים את איך שמסתכלים על מרוקו" data-en="🏛️ Rabat &amp; Casablanca Background &amp; 4 Spicy Historical Stories Behind the Route">🏛️ רקע על רבאט וקזבלנקה ו-4 סיפורים פיקנטיים שמשנים את איך שמסתכלים על מרוקו</h2>
+        <button type="button" class="btn-stop-speak" onclick="speakCustomBlock('intro')" data-he="🔊 האזן לרקע ולסיפורים" data-en="🔊 Listen to City Stories">🔊 האזן לרקע ולסיפורים</button>
+      </div>
+      <div class="story-cards-grid">
+        <div class="story-mini-card">
+          <strong data-he="1. &quot;רפובליקת הפיראטים של סלא&quot; שהונהגה על ידי הולנדי שהתאסלם (1627)" data-en="1. The Pirate Republic of Salé Led by a Dutch Admiral Turned Corsair (1627)">1. &quot;רפובליקת הפיראטים של סלא&quot; שהונהגה על ידי הולנדי שהתאסלם (1627)</strong>
+          <span data-he="בקסבת האודאיה ובגדת הנהר ממול (Salé) קמה במאה ה-17 רפובליקת פיראטים עצמאית של מגורשי ספרד שבראשה עמד יאן יאנסון מהארלם (Murad Reis), שפשטה אפילו על חופי אירלנד ואיסלנד!" data-en="In the 17th century, the Kasbah of the Udayas and Salé formed an independent Corsair Republic of expelled Spanish Moriscos led by Dutch pirate Jan Janszoon (Murad Reis), who raided as far north as Ireland and Iceland!">בקסבת האודאיה ובגדת הנהר ממול (Salé) קמה במאה ה-17 רפובליקת פיראטים עצמאית של מגורשי ספרד שבראשה עמד יאן יאנסון מהארלם (Murad Reis), שפשטה אפילו על חופי אירלנד ואיסלנד!</span>
+        </div>
+        <div class="story-mini-card">
+          <strong data-he="2. מגדל חסן הלא-גמור ורעידת האדמה של ליסבון (1199 / 1755)" data-en="2. The Unfinished Hassan Tower &amp; the 1755 Lisbon Megathrust Earthquake">2. מגדל חסן הלא-גמור ורעידת האדמה של ליסבון (1199 / 1755)</strong>
+          <span data-he="הח׳ליף יעקוב אל-מנסור ביקש לבנות ברבאט ב-1195 את המסגד הגדול בעולם עם צריח בגובה 86 מטר (אח תאום לחיראלדה בסביליה ולכותוביה במרקש). הוא מת ב-1199 כשהצריח הגיע ל-44 מטר בלבד, ורעידת האדמה של ליסבון ב-1755 הפילה את 348 עמודי השיש סביבו." data-en="Caliph Yaqub al-Mansur began building the world’s largest mosque in 1195 with an 86m minaret (twin to Seville’s Giralda and Marrakesh’s Koutoubia). When he died in 1199 construction froze at 44m, and the 1755 Lisbon earthquake toppled the 348 stone columns below.">הח׳ליף יעקוב אל-מנסור ביקש לבנות ברבאט ב-1195 את המסגד הגדול בעולם עם צריח בגובה 86 מטר (אח תאום לחיראלדה בסביליה ולכותוביה במרקש). הוא מת ב-1199 כשהצריח הגיע ל-44 מטר בלבד, ורעידת האדמה של ליסבון ב-1755 הפילה את 348 עמודי השיש סביבו.</span>
+        </div>
+        <div class="story-mini-card">
+          <strong data-he="3. מעבדת האר-דקו והמודרניזם של הגנרל Lyautey ו-Henri Prost (1912-1930)" data-en="3. General Lyautey &amp; Henri Prost’s Art Deco Urban Laboratory (1912-1930)">3. מעבדת האר-דקו והמודרניזם של הגנרל Lyautey ו-Henri Prost (1912-1930)</strong>
+          <span data-he="בניגוד לאלג׳יר שבה הצרפתים הרסו את העיר העתיקה, הנציב Hubert Lyautey והמתכנן Henri Prost אסרו לגעת במדינה המוסלמית ובנו לצידה שדרות ניאו-מוריות ואר-דקו אוונגרדיות מהנועזות בעולם." data-en="Unlike Algiers where French planners demolished the old city, Resident-General Lyautey and urbanist Henri Prost preserved the historic Medinas intact while building bold Neo-Moorish and Art Deco concrete boulevards right alongside them.">בניגוד לאלג׳יר שבה הצרפתים הרסו את העיר העתיקה, הנציב Hubert Lyautey והמתכנן Henri Prost אסרו לגעת במדינה המוסלמית ובנו לצידה שדרות ניאו-מוריות ואר-דקו אוונגרדיות מהנועזות בעולם.</span>
+        </div>
+        <div class="story-mini-card">
+          <strong data-he="4. מסגד חסן ה-2 על גלי האוקיינוס והתיאטרון האחרון של זאהה חדיד" data-en="4. Hassan II Mosque Over the Atlantic Waves &amp; Zaha Hadid’s Final Masterpiece">4. מסגד חסן ה-2 על גלי האוקיינוס והתיאטרון האחרון של זאהה חדיד</strong>
+          <span data-he="בקזבלנקה נבנה מסגד חסן ה-2 ממש על משטח סלע שנכבש מגלי האוקיינוס האטלנטי עם צריח בגובה 210 מטר וגג טיטניום נפתח; ובעמק נהר בורגרג ברבאט ניצב התיאטרון הפיסולי הזורם של זאהה חדיד מול מגדל מוחמד ה-6 (250m)." data-en="In Casablanca, the Hassan II Mosque rises directly out of the crashing Atlantic swell with a 210m laser minaret and retractable titanium roof, while Rabat’s Bouregreg valley showcases Zaha Hadid’s sculptural fluid-concrete Grand Theatre.">בקזבלנקה נבנה מסגד חסן ה-2 ממש על משטח סלע שנכבש מגלי האוקיינוס האטלנטי עם צריח בגובה 210 מטר וגג טיטניום נפתח; ובעמק נהר בורגרג ברבאט ניצב התיאטרון הפיסולי הזורם של זאהה חדיד מול מגדל מוחמד ה-6 (250m).</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGISTICS & TRANSIT -->
+    <section class="logistics-banner" aria-label="לוגיסטיקה ותחבורה">
+      <h2 data-he="🛂 כללי זהב קריטיים למרוקו: דרכון פורטוגלי, הדפסת כרטיס עלייה למטוס (חובה!), סים ורכבת" data-en="🛂 Critical Morocco Rules: Portuguese Passport, Mandatory Printed Boarding Pass, SIM &amp; Rail">🛂 כללי זהב קריטיים למרוקו: דרכון פורטוגלי, הדפסת כרטיס עלייה למטוס (חובה!), סים ורכבת</h2>
+      <p data-he="🛂 1. חובה להיכנס ולצאת עם הדרכון הפורטוגלי + חובה להדפיס כרטיס עלייה למטוס על נייר (Paper Boarding Pass): בשדות התעופה של מרוקו (RBA ו-RAK) חברת Ryanair אינה מקבלת כרטיס עלייה למטוס באפליקציה בטלפון! הדפס מראש בדבלין (או בקבלה בהוסטל) את כרטיס החזור (FR163), וגש תחילה לדלפק Ryanair בשדה להחתמת Visa/Document Check על הנייר לפני הבידוק." data-en="🛂 1. Portuguese Passport + MANDATORY Printed Paper Boarding Pass: Moroccan airports (RBA &amp; RAK) do NOT accept mobile boarding passes! Print your return FR163 boarding pass PDF on A4 paper before Sunday, and stop at the Ryanair check-in desk at RBA for the mandatory Document Check stamp before security.">🛂 <strong>1. דרכון פורטוגלי + הדפסת כרטיס עלייה למטוס על נייר (חובה!):</strong> בשדות התעופה של מרוקו (<code>RBA</code> ו-<code>RAK</code>) ראיינאייר <strong>לא מקבלת כרטיס בטלפון</strong>. הדפס מראש על נייר את כרטיס החזור (<code>FR163</code>) ועבור בדלפק <code>Ryanair</code> בשדה להחתמת הנייר לפני הבידוק.</p><p data-he="📱 2. סים ואינטרנט (טריק ל-2 הטיולים במרוקו בנובמבר!): בסים הארגוני של Vodafone IE מרוקו היא Zone 3 (7.50€ ליום). לחלופין, קנה ב-06/11 חבילת eSIM למרוקו ל-30 יום (Revolut / Airalo ב-~6€ ל-3GB) והיא תכסה לך אוטומטית גם את טיול רבאט (06-08/11) וגם את טיול מרקש (26-30/11)!" data-en="📱 2. Smart eSIM Trick Covering BOTH November Morocco Trips: On Vodafone IE Corp SIM, Morocco is Zone 3 (€7.50/day). Alternatively, buy a single 30-day Morocco eSIM on Nov 6 (~€6 for 3GB on Revolut/Airalo) and it stays active for BOTH your Rabat trip (Nov 6-8) and Marrakesh trip (Nov 26-30)!">📱 <strong>2. סים ואינטרנט (טריק לשני הטיולים במרוקו):</strong> קנה ב-<code>06/11</code> חבילת <code>eSIM</code> למרוקו ל-30 יום (~6€ ב-Revolut/Airalo) והיא תכסה אוטומטית <strong>גם את רבאט (06-08/11) וגם את מרקש (26-30/11)</strong> (או Vodafone IE Zone 3 ב-7.50€ ליום).</p><p data-he="🚌 3. הגעה משדה RBA למרכז רבאט + מזומן (MAD): ביציאה מהטרמינל קח את אוטובוס האקספרס ALSA Airport Express (קו AE / 210) ישר לתחנת הרכבת Gare de Rabat Ville במרכז העיר (25 דירהם / 2.30€ לכיוון, או 40 דירהם הלוך-חזור, 25 דק׳ נסיעה). משוך ב-ATM בשדה 400-500 דירהם (~40€) ופרוט שטר באוטובוס כדי שיהיו לך מטבעות לטראם (6 MAD לכרטיס) ולמוניות כחולות (Petit Taxi - תמיד לדרוש מונה Compteur!)." data-en="🚌 3. RBA Airport Express Bus &amp; Cash (MAD): Right outside RBA terminal, board ALSA Airport Express Bus AE (Line 210) to Gare de Rabat Ville (25 MAD / €2.30 one-way or 40 MAD return, 25 mins). Withdraw 400-500 MAD (~€40) at the airport ATM and keep small notes/coins for the Rabat-Salé Tramway (6 MAD) and blue Petit Taxis (always ask for the meter / Compteur).">🚌 <strong>3. אוטובוס אקספרס מהשדה ומזומן (MAD):</strong> מחוץ לטרמינל עומד <strong>אוטובוס אקספרס ALSA קו AE (210)</strong> ישר ל-<code>Gare de Rabat Ville</code> (<code>25 MAD / 2.30€</code>, 25 דק׳). משוך בשדה <code>400-500 MAD</code> (~40€) לטראם (<code>6 MAD</code>) ולמוניות כחולות (תמיד לבקש מונה <code>Compteur</code>).</p>
+    </section>
+
+    <!-- CASH & PAYMENT LOGISTICS -->
+    <section class=logistics-banner aria-label="מזומן ותשלומים">
+      <h2 data-he="💶 מדריך כסף ותשלומים לרבאט וקזבלנקה: כמה דירהם למשוך (MAD), איפה יש קונטקטלס ואיפה רק מזומן?" data-en="💶 Money &amp; Payment Guide for Rabat &amp; Casablanca: How Many MAD to Withdraw, Where Contactless Works vs. Cash Only">💶 מדריך כסף ותשלומים לרבאט וקזבלנקה: כמה דירהם למשוך (MAD), איפה יש קונטקטלס ואיפה רק מזומן?</h2>
+      <p data-he="💳 1. כרטיס נייד (Apple Pay / Google Wallet) מול כרטיס פלסטיק פיזי: ברכבת הבין-עירונית ONCF (רבאט-קזבלנקה) ובסופרמרקטים גדולים (Carrefour, Marjane, Acima) אפשר לשלם בקונטקטלס בנייד. לעומת זאת, בכספומטים (ATMs), באוטובוס שדה התעופה (קו AE), במוניות כחולות ובסמטאות המדינה חובה כרטיס פלסטיק פיזי או מזומן (אין קונטקטלס בכספומטים)." data-en="💳 1. Mobile Contactless vs. Physical Card: Contactless via phone works on ONCF intercity trains and modern supermarkets (Carrefour, Marjane). In contrast, airport bus AE, Petit Taxis, Medina stalls, and 95% of Moroccan ATMs require cash or a physical chip-and-PIN card.">💳 <strong>1. קונטקטלס בנייד מול כרטיס פיזי:</strong> ברכבות <code>ONCF</code> ובסופרמרקטים מודרניים (<code>Carrefour</code>, <code>Marjane</code>) אפשר לשלם בנייד (<code>Apple Pay / Revolut</code>). בכספומטים, באוטובוסי שדה ובמוניות <strong>חובה כרטיס פלסטיק פיזי ומזומן</strong>.</p>
+      <div style="overflow-x:auto;margin:10px 0;">
+        <table class="graveyard-table" style="font-size:0.88rem;">
+          <thead>
+            <tr>
+              <th data-he="תחנה / שירות" data-en="Stop / Service">תחנה / שירות</th>
+              <th data-he="עלות משוערת" data-en="Estimated Cost">עלות משוערת</th>
+              <th data-he="אמצעי תשלום נתמך" data-en="Payment Method">אמצעי תשלום נתמך</th>
+              <th data-he="הנחיית שטח" data-en="Field Guidance">הנחיית שטח</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>אוטובוס שדה התעופה ALSA קו AE</strong></td>
+              <td><code>40 MAD</code> (הלוך-חזור)</td>
+              <td>💵 <strong>מזומן בלבד</strong> לנהג</td>
+              <td>קנה כרטיס הלוך-חזור בעלייה ליד הטרמינל ושמור את הקבלה ליום ראשון</td>
+            </tr>
+            <tr>
+              <td><strong>לינה ברבאט (KAYEZER / דאר סבא)</strong></td>
+              <td><code>620-800 MAD</code> (~60€-75€)</td>
+              <td>💵 <strong>מזומן בצ'ק-אין</strong></td>
+              <td>אפשר לשלם בדירהם או בשטרות יורו מדבלין ולקבל קבלה חתומה</td>
+            </tr>
+            <tr>
+              <td><strong>רכבת מהירה לקזבלנקה (ONCF הלוך-חזור)</strong></td>
+              <td><code>74-100 MAD</code> (~7€-9€)</td>
+              <td>📱 <strong>קונטקטלס / אשראי</strong></td>
+              <td>במכונות הכרטיסים בתחנת Gare Rabat Ville (מקבלות אפל פיי / רבולוט)</td>
+            </tr>
+            <tr>
+              <td><strong>טראם רבאט-סאלה (Tramway)</strong></td>
+              <td><code>6 MAD</code> לנסיעה</td>
+              <td>💵 <strong>מטבעות במכונה</strong></td>
+              <td>המכונות מקבלות מטבעות של 5 ו-10 דירהם; חלק מהמסופים לא קוראים כרטיסים זרים</td>
+            </tr>
+            <tr>
+              <td><strong>כרטיס כניסה למסגד חסן ה-2 (קזבלנקה)</strong></td>
+              <td><code>140 MAD</code> (~13€)</td>
+              <td>📱 <strong>אשראי / קונטקטלס</strong> או 💵</td>
+              <td>בקופת המסגד יש מסוף אשראי תקין, או תשלום במזומן</td>
+            </tr>
+            <tr>
+              <td><strong>אוכל רחוב, מאפיות, מים ותה נענע</strong></td>
+              <td><code>150-200 MAD</code> לכל הסופ״ש</td>
+              <td>💵 <strong>מזומן בלבד</strong></td>
+              <td>בסמטאות המדינה ודוכני מיץ תפוזים (5-10 MAD לכוס)</td>
+            </tr>
+            <tr>
+              <td><strong>סופרמרקט (Carrefour Market ליד הרכבת)</strong></td>
+              <td><code>50-100 MAD</code></td>
+              <td>📱 <strong>קונטקטלס בנייד</strong></td>
+              <td>מעולה לקניית מים, נשנושים ופירות ללא צורך במזומן</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p data-he="💰 סך מזומן מומלץ למשיכה ברבאט (06-08/11): כ-1,100 עד 1,200 דירהם (כ-100€-110€) אם משלמים על המלון במזומן, או כ-400-500 דירהם בלבד (כ-40€) אם המלון שולם מראש. משוך בכספומט Al Barid Bank או Attijariwafa בשדה, ותמיד לחץ Without Conversion!" data-en="💰 Total Recommended Cash for Rabat: ~1,100-1,200 MAD (~€100-€110) including cash hotel payment, or just 400-500 MAD (~€40) if lodging is prepaid. Withdraw at Al Barid Bank / Attijariwafa ATM and decline conversion!">💰 <strong>סך מזומן מומלץ למשיכה ברבאט:</strong> כ-<strong>1,100 עד 1,200 MAD</strong> (~100€-110€) אם הלינה משולמת במזומן בצ'ק-אין, או כ-<strong>400-500 MAD</strong> בלבד (~40€) לשאר ההוצאות. תמיד לבחור <code>Without Conversion</code> בכספומט.</p>
+    </section>
+
+    <!-- WEATHER & SUNSET -->
+    <section class="logistics-banner" aria-label="תחזית מזג אוויר ושקיעה">
+      <h2 data-he="🌦️ תחזית מזג אוויר (06/11-08/11), שעות שקיעה (~18:22 UTC+1) וכלל צילום במרוקו" data-en="🌦️ Weather Forecast (06/11-08/11), Sunset (~18:22 UTC+1) &amp; Morocco Photography Rules">🌦️ תחזית מזג אוויר (06/11-08/11), שעות שקיעה (~18:22 UTC+1) וכלל צילום במרוקו</h2>
+      <!-- LIVE_NIGHTLY_WEATHER_START -->
+      <p id="live-nightly-weather-box" style="margin-top:6px;padding:8px 10px;border-radius:6px;background:rgba(245,158,11,0.14);border-inline-start:4px solid #f59e0b;" data-he="🔄 תחזית רב-מודלית לרבאט וקזבלנקה (06/11-08/11): מזג אוויר אביבי-חמים אידיאלי של 22°-24°C ביום ו-15°C בערב לאורך האוקיינוס האטלנטי. חולצה קצרה ביום וג׳קט רוח דק לערב מול האוקיינוס." data-en="🔄 Multi-Model Forecast for Rabat &amp; Casablanca (06/11-08/11): Ideal 22°-24°C daytime sun and 15°C Atlantic evenings. T-shirt by day + light wind jacket for oceanfront Blue Hour.">🔄 <strong>תחזית רב-מודלית לרבאט וקזבלנקה (06/11-08/11):</strong> מזג אוויר אידיאלי של <code>22°-24°C</code> ביום ו-<code>15°C</code> בערב מול האוקיינוס האטלנטי.</p>
+      <!-- LIVE_NIGHTLY_WEATHER_END --><p data-he="🌅 שעון מרוקו (UTC+1 קבוע) + כלל צילום חשוב: מרוקו נשארת ב-UTC+1 כל השנה (מלבד רמדאן), כך שהשקיעה בנובמבר היא ב-18:22 והשעה הכחולה ב-18:25-18:55! ⚠️ כלל אבטחה חשוב: אסור לצלם שוטרים, חיילים, שגרירויות או את שערי הארמון המלכותי (Dar al-Makhzen) מקרוב." data-en="🌅 Morocco Timezone (Permanent UTC+1) &amp; Security Rule: Morocco stays on UTC+1, giving you a late 18:22 sunset and 18:25-18:55 Blue Hour! ⚠️ Photography Law: Never photograph police, military checkpoints, embassies, or Royal Palace guards.">🌅 <strong>שעון מרוקו (UTC+1, שקיעה מאוחרת ב-18:22!) + כלל צילום:</strong> השקיעה היא ב-<code>18:22</code> (שעה וחצי מאוחר יותר מאירופה!). ⚠️ <strong>אסור לצלם</strong> שוטרים, חיילים או שומרי ארמון המלך.</p>
+    </section>
+
+    <nav class="day-tabs" aria-label="סינון לפי ימים">
+      <button type="button" class="day-tab" data-day="all" aria-pressed="true" onclick="filterDay('all')" data-he="כל 3 הימים (12 תחנות)" data-en="All 3 Days (12 Stops)">כל 3 הימים (12 תחנות)</button>
+      <button type="button" class="day-tab" data-day="1" aria-pressed="false" onclick="filterDay('1')" data-he="יום ו׳ 06/11: רבאט - קסבת האודאיה, סלא, מגדל חסן וזאהה חדיד" data-en="Fri 06/11: Rabat - Udayas, Salé, Hassan Tower &amp; Zaha Hadid">יום ו׳ 06/11: רבאט - קסבת האודאיה, סלא, מגדל חסן וזאהה חדיד</button>
+      <button type="button" class="day-tab" data-day="2" aria-pressed="false" onclick="filterDay('2')" data-he="יום ש׳ 07/11: ספרינט רכבת לקזבלנקה (מסגד חסן ה-2 + אר-דקו) + שקיעה ב-Chellah" data-en="Sat 07/11: Casablanca Rail Sprint (Hassan II + Art Deco) + Chellah Sunset">יום ש׳ 07/11: ספרינט רכבת לקזבלנקה (מסגד חסן ה-2 + אר-דקו) + שקיעה ב-Chellah</button>
+      <button type="button" class="day-tab" data-day="3" aria-pressed="false" onclick="filterDay('3')" data-he="יום א׳ 08/11: הברוטליזם והגנים של רבאט -&gt; טיסה 14:05" data-en="Sun 08/11: Rabat Modernism &amp; Gardens -&gt; 14:05 Flight">יום א׳ 08/11: הברוטליזם והגנים של רבאט -&gt; טיסה 14:05</button>
+    </nav>
+
+    <div id="itinerary-content" aria-live="polite" aria-atomic="true"></div>
+
+    <section class="logistics-banner" aria-label="הוסטל ולינת הבסיס">
+      <h2 data-he="🛏️ אסטרטגיית לינה ברבאט (2 לילות: שישי–ראשון 06–08/11 — מעודכן לפי 235–1,035 מדרגים, עלות כוללת + ביטחון ופרופיל נמוך לישראלי)" data-en="🛏️ Single-Base Rabat Strategy (2 Nights: Fri–Sun 06–08/11 — Ranked by 235–1,035 Reviews, True All-In Cost &amp; Low-Profile Discretion)">🛏️ אסטרטגיית לינה ברבאט (2 לילות: שישי–ראשון 06–08/11 — מעודכן לפי 235–1,035 מדרגים, עלות כוללת + פרופיל נמוך)</h2>
+      <p data-he="📍 דירוג מעודכן לרבאט (06/11–08/11, 8–10 דק׳ הליכה לתחנת הרכבת Gare Rabat Ville ולקסבת האודאיה = 0€ מוניות ו-0 זמן נשרף):" data-en="📍 Updated Rabat Ranking (06/11–08/11, 8–10m walk to Gare Rabat Ville &amp; Kasbah of the Udayas = €0 taxis &amp; 0 burned time):">📍 <strong>דירוג מעודכן לרבאט (<code>06/11–08/11</code>, 8–10 דק׳ הליכה לתחנת <code>Gare Rabat Ville</code> ולקסבת האודאיה = <code>0€</code> מוניות ו-<code>0</code> זמן נשרף):</strong> <a href="https://www.booking.com/hotel/ma/kayezer.html?checkin=2026-11-06&amp;checkout=2026-11-08&amp;group_adults=1&amp;no_rooms=1&amp;selected_currency=EUR" target="_blank" rel="noopener">🥇 #1 הכי משתלם לחדר פרטי: KAYEZER ב-Booking (ציון 8.3 מתוך 844 ביקורות, 750m מתחנת הרכבת: רק 57€ / 62€ עם ביטול חינם ל-2 לילות לחדר Twin פרטי, או 34€ למיטה בדורם)</a> · <a href="https://www.booking.com/hotel/ma/dar-saba-rabat.html?checkin=2026-11-06&amp;checkout=2026-11-08&amp;group_adults=1&amp;no_rooms=1&amp;selected_currency=EUR" target="_blank" rel="noopener">🥇 #1ב לחדר פרטי משודרג ומדגם מעולה: DAR SABA ב-Booking (ציון 8.8 מתוך 470 ביקורות, ציון מיקום 9.4: 72€ / 76€ עם ביטול חינם ל-2 לילות לחדר ממוזג)</a> · <a href="https://www.booking.com/hotel/ma/dar-rita-rabat3.html?checkin=2026-11-06&amp;checkout=2026-11-08&amp;group_adults=1&amp;no_rooms=1&amp;selected_currency=EUR" target="_blank" rel="noopener">🥈 #2 חדר פרטי + ארוחת בוקר: Dar Rita ב-Booking (ציון 8.6 מתוך 376 ביקורות: 78€ ל-2 לילות כולל ארוחת בוקר מלאה + ביטול חינם)</a> · <a href="https://www.booking.com/hotel/ma/maison-mira.html?checkin=2026-11-06&amp;checkout=2026-11-08&amp;group_adults=1&amp;no_rooms=1&amp;selected_currency=EUR" target="_blank" rel="noopener">🥉 #3 לדורם: Maison Mira (36€–39€ ל-2 לילות, 245 ביקורות)</a></p>
+      <p data-he="🛡️ ביטחון אישי ופרופיל נמוך לישראלי ברבאט: רבאט היא עיר הבירה הדיפלומטית והממשלתית של מרוקו — העיר המאובטחת, השקטה והמסודרת ביותר במדינה (אפס הצקות ברחוב, משטרה בכל צומת מרכזי). שני כללי שטח חשובים: (1) למה עדיף חדר פרטי בריאד (DAR SABA / Dar Rita ב-72€–78€) על פני דורם משותף: בדורם של 4 מיטות שאלת הקרח הראשונה של שותפים לחדר היא 'מאיפה אתה?' ומסך הטלפון בעברית חשוף; בחדר פרטי רק פקיד הקבלה רושם את הדרכון בטופס המשטרתי השגרתי (Fiche de Police) למשך דקה ובחדר יש לך 100% פרטיות ושקט. (2) שדרת מוחמד ה-5 מול בניין הפרלמנט (ליד תחנת Gare Rabat Ville): זהו המוקד הקבוע שבו מתקיימות לעיתים הפגנות בסופי שבוע (שישי אחה״צ או ראשון). אם בדרכך לתחנת הרכבת אתה רואה התקהלות מול הפרלמנט, פשוט עבור לרחוב המקביל (Avenue Allal Ben Abdellah) ואל תעצור לצלם הפגנות או שוטרים. סמטאות המדינה עצמן (שבהן נמצאים DAR SABA ו-Dar Rita) שקטות לחלוטין ורחוקות מצירי תהלוכות." data-en="🛡️ Low-Profile Security in Rabat: As Morocco’s diplomatic capital, Rabat is the calmest and most heavily policed city in the country. Two practical rules: (1) Book a private Riad room (DAR SABA or Dar Rita at €72–€78) rather than a shared dorm so you avoid roommate 'where are you from?' small-talk and have 100% privacy after routine front-desk check-in; (2) Weekend demonstrations in Rabat occur specifically in front of the Parliament building on Avenue Mohammed V — if a march is passing there, simply walk one block east on Avenue Allal Ben Abdellah and never photograph rallies or police.">🛡️ <strong>ביטחון אישי ופרופיל נמוך לישראלי ברבאט:</strong> רבאט היא הבירה הדיפלומטית והממשלתית של מרוקו — העיר המאובטחת והשקטה ביותר במדינה. שני כללי שטח: <strong>(1) עדיפות לחדר פרטי (<code>DAR SABA</code> או <code>Dar Rita</code> ב-<code>72€–78€</code>) על פני דורם:</strong> בדורם שותפים לחדר שואלים מיד <em>"מאיפה אתה?"</em> ומסך הטלפון בעברית חשוף; בחדר פרטי רק הקבלה רושמת דרכון בדקה ומקבלים 100% פרטיות. <strong>(2) רחבת הפרלמנט ב-<code>Avenue Mohammed V</code>:</strong> זהו המקום היחיד בעיר שבו מתקיימות לעיתים הפגנות בסופי שבוע; אם יש התקהלות מול הפרלמנט בדרך לרכבת, פשוט לך ברחוב המקביל (<code>Avenue Allal Ben Abdellah</code>) ואל תצלם הפגנות או שוטרים.</p>
+    </section>
+
+    <section aria-label="אתרים וכפרים שנחתכו">
+      <h2 style="font-size:0.92rem;color:var(--accent);margin-top:10px;" data-he="✂️ Tier 3 - בית הקברות לאתרים שנחתכו (Skipped / Cut List)" data-en="✂️ Tier 3 - Skipped / Cut Graveyard (Why We Cut These)">✂️ Tier 3 - בית הקברות לאתרים שנחתכו (Skipped / Cut List)</h2>
+      <table class="graveyard-table">
+        <thead>
+          <tr>
+            <th data-he="אתר / כפר שנחתך" data-en="Cut Site / Village">אתר / כפר שנחתך</th>
+            <th data-he="ציון (/20)" data-en="Score (/20)">ציון (/20)</th>
+            <th data-he="סיבת החיתוך ההנדסית (10-Second Audit)" data-en="Engineering Cut Reason (10-Second Audit)">סיבת החיתוך ההנדסית (10-Second Audit)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Casablanca Overnight Stay</strong></td>
+            <td>9/20 (A:2, B:2, C:2, D:3)</td>
+            <td data-he="לינה בקזבלנקה מוסיפה צ׳ק-אין כפול ופקקים רועשים; רכבת הבוקר מרבאט (55 דק׳) נותנת את מסגד חסן ה-2 ושדרת האר-דקו ב-4.5 שעות מדויקות." data-en="Sleeping in Casablanca adds extra check-in friction and gritty traffic; the 55-min rail sprint from Rabat hits Hassan II Mosque &amp; Art Deco in 4.5 crisp hours.">לינה בקזבלנקה מוסיפה צ׳ק-אין כפול ופקקים רועשים; רכבת הבוקר מרבאט (55 דק׳) נותנת את מסגד חסן ה-2 ושדרת האר-דקו ב-4.5 שעות מדויקות.</td>
+          </tr>
+          <tr>
+            <td><strong>Rick’s Café Casablanca</strong></td>
+            <td>8/20 (A:1, B:1, C:3, D:3)</td>
+            <td data-he="שחזור תיירותי מ-2004 של סרט הוליוודי שצולם בכלל באולפני קליפורניה; אפס ערך אדריכלי היסטורי." data-en="A 2004 tourist bar recreating a 1942 Hollywood movie set filmed in California—zero authentic architectural value.">שחזור תיירותי מ-2004 של סרט הוליוודי שצולם בכלל באולפני קליפורניה; אפס ערך אדריכלי היסטורי.</td>
+          </tr>
+          <tr>
+            <td><strong>Fez / Meknes Day Detour</strong></td>
+            <td>12/20 (A:5, B:4, C:1, D:2)</td>
+            <td data-he="בסופ״ש של 51 שעות נטו (שישי 10:30 עד ראשון 14:05), נסיעה של 5 שעות הלוך-חזור לפאס שורפת את חלון האור של רבאט וקזבלנקה." data-en="In a 51-hour weekend window, a 5-hour round-trip train to Fez cannibalizes Rabat’s UNESCO spine and Casablanca.">בסופ״ש של 51 שעות נטו (שישי 10:30 עד ראשון 14:05), נסיעה של 5 שעות הלוך-חזור לפאס שורפת את חלון האור של רבאט וקזבלנקה.</td>
+          </tr>
+          <tr>
+            <td><strong>Jardin d’Essais Botaniques</strong></td>
+            <td>11/20 (G:2, E:2, V:4, T:2, L:1)</td>
+            <td data-he="פארק בוטני עירוני מישורי של עצים ושבילים שדורש נסיעת טראם הלוך-חזור בפנים העיר ללא דרמת מצוק; הוחלף ברצף רגלי ישיר על שובר הגלים והמצוק האטלנטי." data-en="Flat inland municipal botanical tree park requiring a tram detour; replaced with a continuous oceanfront walk along the Udayas breakwater and Atlantic lighthouse cliffs.">פארק בוטני עירוני מישורי של עצים ושבילים שדורש נסיעת טראם הלוך-חזור בפנים העיר ללא דרמת מצוק; הוחלף ברצף רגלי ישיר על שובר הגלים והמצוק האטלנטי.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <aside class="map-pane" aria-label="מפת המסלול">
+    <div class="map-mode-bar">
+      <span data-he="מקרא סיכות: ★ צהוב/כתום = Tier 1 Anchor (מקסימום 3 ביום) | ● עיגול = Tier 2 Spine ליניארי" data-en="Pin Legend: ★ Gold Star = Tier 1 Crown Anchor (Max 3/day) | ● Circle = Tier 2 Linear Spine"><strong>מקרא סיכות:</strong> ★ צהוב/כתום = Tier 1 Anchor (מקסימום 3 ביום) | ● עיגול = Tier 2 Spine ליניארי</span>
+      <span id="active-filter-label" data-he="מציג: כל 3 הימים" data-en="Showing: All 3 Days">מציג: כל 3 הימים</span>
+    </div>
+    <div id="map"></div>
+    <div id="svg-fallback"></div>
+  </aside>
+</div>
+
+<!-- ELADB_SPEECH_VOICE_GUARD_START -->
+<script>
+(function() {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  var NON_STANDARD_VOICE_REGEX_ = /albert|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|hysterical|junior|organ|pipe|princess|ralph|trinoids|vicki|whisper|zarvox|fred|espeak|novelty|rocko|shelley|grandma|grandpa|eddy|flo|reed|sandy|kathy|eloquence|jester|superstar|wobble/i;
+  window.pickStandardSpeechVoice = function(targetLang) {
+    var voices = window.speechSynthesis.getVoices() || [];
+    var wantHe = String(targetLang || '').toLowerCase().indexOf('he') === 0 || String(targetLang || '').toLowerCase().indexOf('iw') === 0;
+    var bestVoice = null;
+    var bestScore = -1;
+    for (var i = 0; i < voices.length; i++) {
+      var v = voices[i];
+      if (!v) continue;
+      var name = String(v.name || '');
+      var lang = String(v.lang || '').toLowerCase().replace('_', '-');
+      if (NON_STANDARD_VOICE_REGEX_.test(name)) continue;
+      if (wantHe) {
+        if (lang.indexOf('he') !== 0 && lang.indexOf('iw') !== 0 && !/hebrew|עברית|carmit/i.test(name)) continue;
+        var scoreHe = 20 + (v.localService === false ? 25 : 0);
+        if (/google|natural|neural|online|carmit|אסף|asaf/i.test(name)) scoreHe += 80;
+        if (scoreHe > bestScore) { bestScore = scoreHe; bestVoice = v; }
+      } else {
+        if (lang.indexOf('en') !== 0) continue;
+        var scoreEn = 10 + (lang === 'en-us' ? 30 : 20) + (v.localService === false ? 15 : 0);
+        if (/google us english/i.test(name)) scoreEn += 100;
+        else if (/google uk english female/i.test(name)) scoreEn += 90;
+        else if (/google uk english male/i.test(name)) scoreEn += 85;
+        else if (/natural|neural|online|premium|enhanced|siri/i.test(name)) scoreEn += 80;
+        else if (/\b(samantha|ava|allison|alex|victoria|karen|daniel|serena|zira|david|jenny|aria|guy|moira)\b/i.test(name)) scoreEn += 70;
+        else if (v.default) scoreEn += 40;
+        if (scoreEn > bestScore) { bestScore = scoreEn; bestVoice = v; }
+      }
+    }
+    return bestVoice;
+  };
+})();
+</script>
+<!-- ELADB_SPEECH_VOICE_GUARD_END -->
+
+<script>
+let currentLang = 'he';
+let captionsEnabled = true;
+
+const CITY_INTRO_NARRATION = {
+  "he": "ברוכים הבאים למדריך האדריכלות של רבאט, סלא וקזבלנקה במרוקו. שלושה כללי ברזל לפני העלייה למטוס: ראשית, כניסה ויציאה ממרוקו מתבצעות עם הדרכון הפורטוגלי שלך. שנית, בשדות התעופה של מרוקו חברת ראיינאייר אינה מקבלת כרטיס עלייה למטוס בטלפון! חובה להדפיס על נייר את כרטיס החזור ולעבור בדלפק ראיינאייר בשדה להחתמת הנייר לפני הבידוק הביטחוני. שלישית, ביציאה משדה התעופה של רבאט לוקחים את אוטובוס האקספרס של אלסה קו אי-אי ב-25 דירהם ישר לתחנת הרכבת רבאט ויל במרכז העיר, ומושכים כארבע מאות דירהם במזומן עבור הטראם והמוניות הכחולות.",
+  "en": "Welcome to your architectural guide to Rabat, Salé, and Casablanca in Morocco. Three golden rules before departure: first, enter and exit Morocco using your Portuguese passport. Second, Moroccan airports do not accept mobile boarding passes on Ryanair! You must carry a printed paper boarding pass for your Sunday return flight and get it stamped at the Ryanair check-in desk before security. Third, right outside Rabat airport terminal, take the ALSA Airport Express bus for 25 dirhams straight to Gare de Rabat Ville in the city center, and withdraw 400 dirhams in cash for the tramway and blue Petit Taxis."
+};
+
+const ITINERARY_DATA = {
+  "days": [
+    {
+      "day": "1",
+      "title": "יום 1 (שישי 06/11, 10:30 - 21:30): נחיתה ב-RBA -> שדרת האר-דקו -> קסבת האודאיה -> סלא -> שקיעה במגדל חסן וזאהה חדיד",
+      "title_en": "Day 1 (Fri 06/11, 10:30 - 21:30): Land at RBA -> Art Deco Spine -> Kasbah of the Udayas -> Salé -> Sunset at Hassan Tower & Zaha Hadid",
+      "subtitle": "נחיתה ב-10:30 (FR162) -> אוטובוס אקספרס AE ל-Gare de Rabat Ville (11:30) -> ציר UNESCO של רבאט וסלא ברגל ובטראם",
+      "subtitle_en": "Land 10:30 (FR162) -> ALSA Express Bus AE to Rabat Ville (11:30) -> UNESCO Rabat & Salé Spine on foot & tram",
+      "color": "#059669",
+      "stops": [
+        {
+          "id": "d1-s1",
+          "num": 1,
+          "isTier1": false,
+          "tier": "Tier 2 Spine | 17/20 (A:4 B:4 C:5 D:4)",
+          "name": "שדרת Mohammed V, תחנת Rabat Ville וקתדרלת הבטון האקספרסיוניסטית St. Peter’s (1921)",
+          "name_en": "Avenue Mohammed V Art Deco Spine & St. Peter’s Concrete Expressionist Cathedral (1921)",
+          "map_name": "Cathedrale Saint Pierre Rabat Morocco",
+          "lat": 34.0177,
+          "lng": -6.8315,
+          "time": "11:45 - 12:45 (60m)",
+          "time_en": "11:45 - 12:45 (60m)",
+          "cost_he": "חינם (0 MAD)",
+          "cost_en": "Free (0 MAD)",
+          "dur_he": "60 דק׳",
+          "dur_en": "60 mins",
+          "skip_he": "🔥 חובה - על ציר ההליכה הישיר מהאוטובוס אל המדינה",
+          "skip_en": "🔥 MUST-SEE - Directly on the walking spine from the station to the Medina",
+          "isMust": true,
+          "in_he": "חוץ + הצצה של 10 דק׳ לפנים הגיאומטרי של הקתדרלה בכיכר Golan.",
+          "in_en": "Outside + 10-min peek inside St. Peter’s geometric concrete nave on Place du Golan.",
+          "wow_he": "למה זה וואו: שדרת דקלים קולוניאלית לבנה המשלבת קשתות מוגרביות עם בטון אר-דקו משנות ה-20, שבקצה שלה מתנשאים שני מגדלי הבטון הגיאומטריים של האדריכל Adrien Laforgue.",
+          "wow_en": "Why It Is WOW: A monumental palm-lined 1920s Neo-Moorish Art Deco boulevard culminating in Adrien Laforgue’s striking white geometric concrete cathedral towers.",
+          "enroute_he": "על הדרך מהשדה: האוטובוס מוריד אותך ב-Gare de Rabat Ville (שם תראה את גג הפלדה המודרני התלוי מעל המבנה ההיסטורי מ-1923).",
+          "enroute_en": "En-Route from RBA: The airport bus drops you right at Gare de Rabat Ville, where a sweeping modern steel canopy floats over the 1923 Neo-Moorish station.",
+          "wx_he": "☀️ 23°C שמשי ונעים: שדרה מישורית רחבה.",
+          "wx_en": "☀️ 23°C sunny: Wide, flat pedestrian median.",
+          "photo_tip": "עדשה 0.5x ממרכז הכיכר העגולה (Place du Golan) כלפי צמד הצריחים המשולשים של הקתדרלה.",
+          "photo_tip_en": "0.5x ultra-wide from the center of Place du Golan looking up at the twin geometric concrete spires.",
+          "move": "10 דק׳ הליכה צפונה דרך המדינה ורחוב הקונסולים (Rue des Consuls) אל קסבת האודאיה",
+          "move_en": "10m walk north through Rue des Consuls in the Medina to the Kasbah of the Udayas"
+        },
+        {
+          "id": "d1-s2",
+          "num": 2,
+          "isTier1": true,
+          "tier": "Tier 1 Anchor | 20/20 (A:5 B:5 C:5 D:5)",
+          "name": "Kasbah of the Udayas (שער Bab Oudaia האלמוהאדי, הסמטאות הכחולות, הגנים האנדלוסיים ותצפית הים)",
+          "name_en": "Kasbah of the Udayas (12th-C. Bab Oudaia Gate, Blue Streets, Andalusian Gardens & Ocean Platform)",
+          "map_name": "Kasbah of the Udayas Rabat",
+          "lat": 34.0319,
+          "lng": -6.8361,
+          "time": "13:00 - 14:40 (100m)",
+          "time_en": "13:00 - 14:40 (100m)",
+          "cost_he": "חינם לחלוטין (0 MAD לקסבה, לגנים האנדלוסיים ולמרפסת התצפית על האוקיינוס)",
+          "cost_en": "100% Free (0 MAD for the Kasbah, Andalusian Gardens & Atlantic Semaphore platform)",
+          "dur_he": "100 דק׳",
+          "dur_en": "100 mins",
+          "skip_he": "🔥 חובה מוחלטת - הפנינה ההיסטורית של רבאט",
+          "skip_en": "🔥 ABSOLUTE MUST-SEE - The historic crown jewel of Rabat",
+          "isMust": true,
+          "in_he": "חוץ (מצודה פתוחה וגנים): נכנסים מתחת לשער האבן המגולף Bab Oudaia (1195), הולכים בסמטאות הכחולות-לבנות עד מרפסת הסמפור מעל שפך הנהר והאוקיינוס, ויורדים לגנים האנדלוסיים.",
+          "in_en": "Outside Open Fortress & Gardens: Enter through the monumental 1195 carved Bab Oudaia gate, walk the indigo-and-white alleys to the ocean cliff platform, and loop through the sunken Andalusian Gardens.",
+          "wow_he": "למה זה וואו: מבצר צוק מהמאה ה-12 הצבוע כולו בכחול אינדיגו ולבן בוהק, תלוי בדיוק בנקודה שבה נהר הבורגרג פוגש את גלי הענק של האוקיינוס האטלנטי.",
+          "wow_en": "Why It Is WOW: A 12th-century Almohad cliff citadel painted in vivid indigo and whitewash, perched directly above the crashing Atlantic surf and Bouregreg river mouth.",
+          "enroute_he": "על הדרך: צועדים לאורך Rue des Consuls (רחוב שבו גרו שגרירי אירופה במאה ה-18 תחת תקרת עץ קלועה).",
+          "enroute_en": "En-Route: Walk up Rue des Consuls under woven reed sun-canopies where foreign ambassadors lived in the 18th century.",
+          "wx_he": "☀️ 23°C עם בריזת אוקיינוס רעננה במרפסת התצפית.",
+          "wx_en": "☀️ 23°C with a crisp Atlantic breeze on the Semaphore terrace.",
+          "photo_tip": "עדשה 1x ממרפסת ה-Semaphore שממסגרת את המגדלור, שוברי הגלים והעיר הלבנה של Salé מעבר לנהר.",
+          "photo_tip_en": "1x lens from the Semaphore platform framing the crashing Atlantic waves, Bouregreg river mouth, and white Salé across the water.",
+          "move": "ירידה לנהר הבורגרג וחצייה בסירת משוטים מסורתית (2.5 MAD / 0.25€) או בטראם אל Salé",
+          "move_en": "Walk down to the Bouregreg jetty and cross by rowboat (2.5 MAD) or Tramway to Salé"
+        },
+        {
+          "id": "d1-s3",
+          "num": 3,
+          "isTier1": false,
+          "tier": "Tier 2 Spine | 18/20 (A:5 B:5 C:4 D:4)",
+          "name": "Salé Medina & Medersa Abou El Hassan (מדרסת העץ והסטוקו המרינית מ-1341)",
+          "name_en": "Salé Medina & Medersa Abou El Hassan (1341 Marinid Carved Cedar & Zellij Courtyard)",
+          "map_name": "Medersa Abou El Hassan Sale Morocco",
+          "lat": 34.0392,
+          "lng": -6.8225,
+          "time": "15:00 - 16:10 (70m)",
+          "time_en": "15:00 - 16:10 (70m)",
+          "cost_he": "20 MAD (~1.80€) כניסה למדרסה",
+          "cost_en": "20 MAD (~€1.80) Medersa ticket",
+          "dur_he": "70 דק׳",
+          "dur_en": "70 mins",
+          "skip_he": "⚡ פנינה נסתרת בלי תיירים בכלל - שווה מאוד",
+          "skip_en": "⚡ Zero-tourist Marinid architectural gem",
+          "isMust": false,
+          "in_he": "פנים + גג (מוצדק ב-100% ב-1.80€): נכנסים לחצר הפסיפס ועולים במדרגות הצרות לתאי הסטודנטים בקומה השנייה ולגג.",
+          "in_en": "Inside Courtyard + Rooftop (100% Worth €1.80): Enter the carved courtyard and climb the narrow stairs to the upper student cells and roof terrace.",
+          "wow_he": "למה זה וואו: פנינה מרינית מ-1341 עם גילופי עץ ארז, תחרת סטוקו ופסיפס זליז׳ ברמת פירוט של אלהמברה, אך ריקה לחלוטין מתיירים.",
+          "wow_en": "Why It Is WOW: An intimate 1341 Marinid Quranic college showcasing lace-like stucco, carved Atlas cedar, and zellij tilework with zero crowds.",
+          "enroute_he": "על הדרך: חציית נהר הבורגרג בסירת עץ קטנה ממרינת האודאיה אל גדת Salé אורכת 3 דקות ונותנת זווית צילום נמוכה מהמים על מצוק הקסבה.",
+          "enroute_en": "En-Route: Crossing the Bouregreg river in a wooden skiff gives a water-level view looking straight up at the Udayas cliff walls.",
+          "wx_he": "☀️ 23°C: חצר פנימית מוצלת וקרירה.",
+          "wx_en": "☀️ 23°C: Shaded interior courtyard.",
+          "photo_tip": "עדשה 0.5x מחלון עץ הארז בקומה השנייה כלפי מטה על בריכת השיש בחצר הפנימית.",
+          "photo_tip_en": "0.5x ultra-wide from the second-floor cedar gallery looking down into the symmetrical marble courtyard.",
+          "move": "נסיעה של 2 תחנות בטראם (קווים T1/T2 על גשר חסן ה-2, 6 MAD) אל תחנת Place du 16 Novembre / Tour Hassan",
+          "move_en": "2 stops on the Rabat-Salé Tramway (6 MAD across Hassan II Bridge) to Tour Hassan"
+        },
+        {
+          "id": "d1-s4",
+          "num": 4,
+          "isTier1": true,
+          "tier": "Tier 1 Anchor | 20/20 (A:5 B:5 C:5 D:5)",
+          "name": "Hassan Tower & Mausoleum of Mohammed V + Grand Théâtre de Rabat של Zaha Hadid בשקיעה ובשעה הכחולה",
+          "name_en": "Hassan Tower (348 Columns) & Zaha Hadid’s Grand Théâtre de Rabat at Sunset & Blue Hour",
+          "map_name": "Hassan Tower Rabat Morocco",
+          "lat": 34.0242,
+          "lng": -6.8227,
+          "time": "16:30 - 19:30 (שקיעה 18:22 + אורות לילה)",
+          "time_en": "16:30 - 19:30 (Sunset at 18:22 + Blue Hour illumination)",
+          "cost_he": "חינם לחלוטין (0 MAD גם לרחבת מגדל חסן, גם למאוזוליאום וגם לטיילת זאהה חדיד)",
+          "cost_en": "100% Free (0 MAD for Hassan Tower plaza, Mausoleum & Zaha Hadid riverfront)",
+          "dur_he": "3 שעות (אור זהב + שקיעה + שעה כחולה)",
+          "dur_en": "3 hours (Golden Hour + Sunset + Blue Hour)",
+          "skip_he": "🔥 חובה מוחלטת - הניגוד האדריכלי החזק ביותר בצפון אפריקה (1195 מול 2024)",
+          "skip_en": "🔥 ABSOLUTE MUST-SEE - North Africa’s greatest architectural contrast (1195 vs. 2024)",
+          "isMust": true,
+          "in_he": "פנים + חוץ: הולכים בין 348 עמודי השיש של מגדל חסן, מציצים מהגלריה העליונה אל כיפת עלי הזהב המגולפת של המאוזוליאום, ויורדים ברגל (10 דק׳) לטיילת נהר הבורגרג צמוד לתיאטרון הפיסולי של זאהה חדיד בשעה הכחולה.",
+          "in_en": "Inside Mausoleum Gallery + Outside Plaza & Riverfront: Walk the forest of 348 stone columns at Hassan Tower, view the gilded mahogany dome inside the Mausoleum, then walk 10 mins down to Zaha Hadid’s fluid white concrete Grand Theatre at Blue Hour.",
+          "wow_he": "למה זה וואו: באותו פריים עומדים צריח אבן החול האדום מהמאה ה-12 ו-348 עמודי השיש העתיקים, ומאחוריהם בעמק הנהר מתעקלות הקשתות העתידניות של זאהה חדיד ולצידן מגדל הזכוכית של מוחמד ה-6 בגובה 250 מטר המואר בלילה.",
+          "wow_en": "Why It Is WOW: In a single visual sweep, the 12th-century red sandstone Hassan Tower and 348 ruined pillars overlook Zaha Hadid’s futuristic fluid-concrete Grand Theatre and the 250m illuminated Mohammed VI supertall tower.",
+          "enroute_he": "על הדרך: הירידה מרחבת מגדל חסן אל גשר חסן ה-2 וטיילת הנהר ממקמת אותך ממש למרגלות קונכיית הבטון הלבנה של זאהה חדיד.",
+          "enroute_en": "En-Route: Walking down from the Hassan Tower esplanade to the riverfront boulevard places you right alongside Zaha Hadid’s sweeping white sculptural curves.",
+          "wx_he": "🌅 19°C בשקיעה (18:22): אבן החול האדומה של מגדל חסן בוערת בכתום ואז התיאטרון של זאהה חדיד נדלק בלבן.",
+          "wx_en": "🌅 19°C at 18:22 sunset: The red sandstone tower glows amber before Zaha Hadid’s white concrete shell lights up at dusk.",
+          "photo_tip": "זווית 1 (17:30): עדשה 1x נמוכה בין עמודי האבן השבורים של מגדל חסן. זווית 2 (18:35 שעה כחולה): עדשה 0.5x מטיילת הנהר שממסגרת את הקימורים של זאהה חדיד עם מגדל מוחמד ה-6 ברקע.",
+          "photo_tip_en": "Angle 1 (17:30): Low-angle 1x through the stone column grid toward Hassan Tower. Angle 2 (18:35 Blue Hour): 0.5x from the river promenade framing Zaha Hadid’s curves against the 250m tower.",
+          "move": "טראם או 15 דק׳ הליכה חזרה למרכז רבאט",
+          "move_en": "Tram or 15m walk back to central Rabat"
+        }
+      ]
+    },
+    {
+      "day": "2",
+      "title": "יום 2 (שבת 07/11, 07:45 - 21:00): ספרינט רכבת מהירה לקזבלנקה (ללא תיק!) -> מסגד חסן ה-2 -> אר-דקו -> שקיעה ב-Chellah ברבאט",
+      "title_en": "Day 2 (Sat 07/11, 07:45 - 21:00): Pocket-Only Rail Sprint to Casablanca -> Hassan II Mosque -> Art Deco -> Rabat Chellah Sunset",
+      "subtitle": "רכבת ONCF מ-Rabat Ville ל-Casa Port (07:50->08:45, ~45 MAD) -> סיור בוקר במסגד חסן ה-2 ובשדרות האר-דקו -> חזרה לרבאט ב-14:15 לשקיעה ב-Chellah",
+      "subtitle_en": "ONCF train Rabat Ville to Casa Port (07:50->08:45, ~45 MAD) -> Hassan II Mosque & Art Deco Spine -> Return to Rabat by 14:15 for Chellah Sunset",
+      "color": "#d97706",
+      "stops": [
+        {
+          "id": "d2-s1",
+          "num": 5,
+          "isTier1": true,
+          "tier": "Tier 1 Anchor | 20/20 (A:5 B:5 C:5 D:5)",
+          "name": "Casablanca: Hassan II Mosque (הצריח בגובה 210m מעל גלי האוקיינוס + סיור פנים ב-09:00/10:00)",
+          "name_en": "Casablanca: Hassan II Mosque (210m Oceanfront Minaret + Guided Interior & Hammam Tour)",
+          "map_name": "Hassan II Mosque Casablanca",
+          "lat": 33.6084,
+          "lng": -7.6327,
+          "time": "09:00 - 11:00 (120m)",
+          "time_en": "09:00 - 11:00 (120m)",
+          "cost_he": "140 MAD (~13€, מקבלים אשראי) לכניסה פנימה; רחבת הענק מעל הים חינם (0 MAD)",
+          "cost_en": "140 MAD (~€13, card accepted) for interior guided tour; vast ocean esplanade is Free (0 MAD)",
+          "dur_he": "120 דק׳ (רחבת האוקיינוס החיצונית + 50 דק׳ סיור פנים ואולמות החמאם התת-קרקעיים)",
+          "dur_en": "120 mins (vast Atlantic sea walls + 50m interior hall & underground ablution lotus halls)",
+          "skip_he": "🔥 חובה מוחלטת - המסגד היחיד במרוקו שפתוח ללא-מוסלמים והבניין המונומנטלי במדינה",
+          "skip_en": "🔥 ABSOLUTE MUST-SEE - The only monumental mosque in Morocco open to non-Muslims",
+          "isMust": true,
+          "in_he": "פנים + חוץ (מוצדק ב-100% ב-13€): זהו היוצא מן הכלל הגדול — היכל תפילה ל-25,000 איש עם גג טיטניום וארז שנפתח לשמיים וקומת מרתף של 41 מזרקות שיש בצורת פרחי לוטוס.",
+          "in_en": "Inside + Outside (100% Worth €13): Enter the colossal 25,000-person prayer hall with its retractable cedar-and-titanium roof and descend to the 41 marble lotus fountains.",
+          "wow_he": "למה זה וואו: מבנה עצום הבנוי על מצוק סלע מלאכותי בתוך האוקיינוס האטלנטי כשגלי הענק נשברים ישירות על קירות הפסיפס שלו, עם צריח בגובה 210 מטר (גבוה מפירמידת גיזה).",
+          "wow_en": "Why It Is WOW: Built on a rocky outcrop reclaimed from the Atlantic Ocean where giant rollers crash directly against the seawalls below a 210m minaret.",
+          "enroute_he": "על הדרך מתחנת הרכבת המודרנית Casa Port: מונית אדומה (Petit Taxi עם מונה, ~15 MAD / 1.40€, 7 דק׳) או 25 דק׳ הליכה לאורך החוף.",
+          "enroute_en": "En-Route from Casa Port rail station: 7-min red Petit Taxi (15 MAD / €1.40 on the meter) directly to the ocean esplanade.",
+          "wx_he": "☀️ 22°C: רוח אוקיינוס מרעננת ברחבה החיצונית.",
+          "wx_en": "☀️ 22°C: Dramatic ocean spray along the western seawall.",
+          "photo_tip": "עדשה 0.5x מקצה שובר הגלים המערבי שממסגרת את הצריח העצום (210m) יחד עם רסס גלי האוקיינוס.",
+          "photo_tip_en": "0.5x ultra-wide from the western seawall promenade framing the 210m minaret rising out of the Atlantic spray.",
+          "move": "מונית קצרה (15 MAD, 8 דק׳) אל לב שדרות האר-דקו ו-Place Mohammed V",
+          "move_en": "8m Petit Taxi (15 MAD) to Sacré-Cœur & Place Mohammed V Art Deco center"
+        },
+        {
+          "id": "d2-s2",
+          "num": 6,
+          "isTier1": true,
+          "tier": "Tier 1 Anchor | 18/20 (A:5 B:5 C:4 D:4)",
+          "name": "Casablanca Art Deco & Brutalist Spine: קתדרלת הבטון Sacré-Cœur (1930), Place Mohammed V ושדרת המודרניזם",
+          "name_en": "Casablanca Art Deco & Concrete Spine: Sacré-Cœur Cathedral (1930), Place Mohammed V & Boulevard Mohammed V",
+          "map_name": "Sacre Coeur Cathedral Casablanca",
+          "lat": 33.5912,
+          "lng": -7.6246,
+          "time": "11:15 - 13:15 (120m)",
+          "time_en": "11:15 - 13:15 (120m)",
+          "cost_he": "חינם (0 MAD)",
+          "cost_en": "Free (0 MAD)",
+          "dur_he": "120 דק׳ (מסלול הליכה ליניארי עד תחנת Casa Port)",
+          "dur_en": "120 mins (linear architectural walk back to Casa Port station)",
+          "skip_he": "🔥 חובה לחובבי אדריכלות - אוסף האר-דקו והברוטליזם הגדול באפריקה",
+          "skip_en": "🔥 MUST-SEE for Architecture Lovers - Africa’s premier Art Deco & Brutalist open-air museum",
+          "isMust": true,
+          "in_he": "חוץ בלבד: מסלול הליכה ליניארי מ-Parc de la Ligue Arabe וקתדרלת Sacré-Cœur, דרך Place Mohammed V (בית המשפט, הדואר והתיאטרון של Christian de Portzamparc) ועד בניין Immeuble Assayag ושדרת Mohammed V בדרך לתחנת הרכבת.",
+          "in_en": "Outside Linear Walk: Walk from Sacré-Cœur Cathedral through Place Mohammed V (Neo-Moorish Courthouse + Portzamparc’s sculptural Grand Théâtre) down Boulevard Mohammed V’s Art Deco facades back to Casa Port.",
+          "wow_he": "למה זה וואו: קתדרלת Sacré-Cœur של Paul Tournon (1930) נראית כמו חללית גותית-מורית מיציקת בטון לבנה עם תומכות דואות גיאומטריות ומושרביות בטון.",
+          "wow_en": "Why It Is WOW: Paul Tournon’s 1930 Sacré-Cœur Cathedral fuses Gothic flying buttresses with Moroccan minaret proportions and geometric concrete mashrabiya grids.",
+          "enroute_he": "על הדרך לתחנת הרכבת Casa Port (רכבת 13:20 או 13:50 לרבאט): עוברים בשדרת Mohammed V מתחת למרפסות המעוגלות של בנייני האר-דקו מ-1932.",
+          "enroute_en": "En-Route to Casa Port station (13:20/13:50 train to Rabat): Stroll under the curved aerodynamic balconies and zellij-trimmed Art Deco apartment blocks of Boulevard Mohammed V.",
+          "wx_he": "☀️ 24°C: שדרות רחבות עם צל דקלים.",
+          "wx_en": "☀️ 24°C: Palm-shaded boulevards.",
+          "photo_tip": "עדשה 0.5x מלמטה כלפי תומכות הבטון הלבנות של Sacré-Cœur מול השמיים הכחולים.",
+          "photo_tip_en": "0.5x low-angle looking straight up the geometric white concrete buttresses of Sacré-Cœur.",
+          "move": "רכבת ONCF מ-Casa Port (13:30) חזרה ל-Rabat Ville (14:25) -> מונית/הליכה ל-Chellah",
+          "move_en": "ONCF train from Casa Port (13:30) back to Rabat Ville (14:25) -> 5m taxi or 15m walk to Chellah"
+        },
+        {
+          "id": "d2-s3",
+          "num": 7,
+          "isTier1": true,
+          "tier": "Tier 1 Anchor | 20/20 (A:5 B:5 C:5 D:5)",
+          "name": "Rabat: Chellah Necropolis (העיר הרומית Sala Colonia והנקרופוליס המריני מוקף החומה באור שקיעה)",
+          "name_en": "Rabat: Chellah Fortified Necropolis (Roman Sala Colonia & 14th-C. Merinid Ruins at Golden Hour)",
+          "map_name": "Chellah Rabat Morocco",
+          "lat": 34.0071,
+          "lng": -6.8206,
+          "time": "15:00 - 17:15 (135m — ⚠️ שעון חורף: שערי Chellah ננעלים ב-18:00 לפני השקיעה, כניסה אחרונה ב-17:15)",
+          "time_en": "15:00 - 17:15 (135m — ⚠️ Winter Hours: Chellah gates lock at 18:00 before sunset, last entry 17:15)",
+          "cost_he": "70 MAD (~6.50€)",
+          "cost_en": "70 MAD (~€6.50)",
+          "dur_he": "135 דק׳",
+          "dur_en": "135 mins",
+          "skip_he": "🔥 חובה מוחלטת - האתר הארכיאולוגי-אדריכלי הדרמטי ביותר ברבאט (הגע עד 15:15 כי השער ננעל ב-18:00!)",
+          "skip_en": "🔥 ABSOLUTE MUST-SEE - Most atmospheric fortified ruin in Morocco (arrive by 15:15 before 18:00 gate lock!)",
+          "isMust": true,
+          "in_he": "פנים + חוץ (מוצדק ב-100% — שים לב שבחורף המתחם נסגר ב-18:00!): נכנסים דרך השער המתומן המבוצר ויורדים בשבילי הגנים בין הפורום הרומי העתיק לבין המינרט המריני המעוטר בפסיפס שמעליו מקננות עשרות חסידות.",
+          "in_en": "Inside Walled Complex (100% Worth €6.50 — Note 18:00 winter closing!): Enter through the fortified octagonal gate and descend past the Roman triumphal arch into the 14th-century Islamic sanctuary crowned with stork nests.",
+          "wow_he": "למה זה וואו: שילוב סוריאליסטי של חומות אבן אדומות מהמאה ה-14, עמודים רומיים של הפרובינקיה מאוריטניה, בריכות מעיין עתיקות וצריח מריני מכוסה זליז׳ שעל ראשו קני חסידות ענקיים מול עמק הנהר.",
+          "wow_en": "Why It Is WOW: A walled 14th-century red-earth fortress enclosing both ancient Roman columns and a zellij-tiled Islamic minaret topped by giant stork nests overlooking the Bouregreg valley.",
+          "enroute_he": "על הדרך מתחנת Rabat Ville: עוברים לצד חומות הארמון המלכותי ורובע ה-Ministères.",
+          "enroute_en": "En-Route from Rabat Ville: Pass the monumental ochre ramparts near Bab Zaër.",
+          "wx_he": "🌅 22°C באור זהב (16:00-17:30): קרני השמש האלכסוניות מאירות את אבן החול הכתומה.",
+          "wx_en": "🌅 22°C Golden Hour: Low afternoon sun sets the ochre battlements and palm gardens ablaze.",
+          "photo_tip": "עדשה 2x מהטרסה העליונה שממסגרת את הקשתות הרומיות למטה יחד עם הצריח המריני וקן החסידות.",
+          "photo_tip_en": "2x telephoto from the upper terrace compressing the Roman columns, Marinid minaret, and stork nests in one frame.",
+          "move": "15 דק׳ הליכה חזרה לשדרת Mohammed V ולכיכר המוזיאון לאמנות מודרנית (MMVI)",
+          "move_en": "15m walk back to Avenue Mohammed V & MMVI Museum Plaza"
+        },
+        {
+          "id": "d2-s4",
+          "num": 8,
+          "isTier1": false,
+          "tier": "Tier 2 Spine | 17/20 (A:4 B:4 C:5 D:4)",
+          "name": "Rabat Blue Hour: רחבת הארקדות של מוזיאון Mohammed VI (MMVI), שער Bab Rouah והמדינה המוארת",
+          "name_en": "Rabat Blue Hour: MMVI Neo-Moorish Arcade Plaza, Bab Er-Rouah Monumental Gate & Night Medina",
+          "map_name": "Mohammed VI Museum of Modern and Contemporary Art Rabat",
+          "lat": 34.0149,
+          "lng": -6.8326,
+          "time": "17:30 - 20:30 (שקיעה 18:22 + ערב ברבאט)",
+          "time_en": "17:30 - 20:30 (Sunset 18:22 + Night stroll)",
+          "cost_he": "חינם מבחוץ (0 MAD)",
+          "cost_en": "Free exterior (0 MAD)",
+          "dur_he": "90 דק׳",
+          "dur_en": "90 mins",
+          "skip_he": "⚡ על הדרך חזרה להוסטל - חזית מוארת מרשימה מאוד בלילה",
+          "skip_en": "⚡ Directly on your evening walk back to the hostel",
+          "isMust": false,
+          "in_he": "חוץ בלבד (בלי להיכנס לתערוכת הציורים): צילום ארקדות הערבסקות הלבנות המוארות בלילה והליכה דרך שער האבן העצום Bab Er-Rouah (שער הרוחות מ-1197).",
+          "in_en": "Outside Only (Skip indoor painting galleries): Admire the illuminated geometric double-arcade exterior of MMVI and walk through the 1197 Almohad gate of Bab Er-Rouah.",
+          "wow_he": "למה זה וואו: בלילה חזית הקשתות הכפולה של מוזיאון MMVI מוארת מבפנים כמו פנס תחרה גיאומטרי לבן, במרחק 300 מטר משער האבן המונומנטלי Bab Er-Rouah.",
+          "wow_en": "Why It Is WOW: At dusk the white geometric brise-soleil colonnade of the MMVI Museum glows like a carved lantern just steps from the 1197 Almohad bastion of Bab Er-Rouah.",
+          "enroute_he": "על הדרך: כל הציר מרושת במדרכות אבן רחבות ומוארות.",
+          "enroute_en": "En-Route: Wide, well-lit pedestrian avenues connect Bab Er-Rouah straight up to the Medina walls.",
+          "wx_he": "🌙 17°C נעים בערב.",
+          "wx_en": "🌙 17°C mild evening.",
+          "photo_tip": "עדשה 1x סימטרית מול הקשתות המוארות של MMVI בשעה הכחולה.",
+          "photo_tip_en": "Symmetrical 1x shot facing the glowing white arches of MMVI at Blue Hour.",
+          "move": "הליכה קצרה ללינה ברבאט",
+          "move_en": "Short walk back to Rabat accommodation"
+        }
+      ]
+    },
+    {
+      "day": "3",
+      "title": "יום 3 (ראשון 08/11, 08:45 - 11:45): שובר הגלים של שפך הבורגרג -> מצוק המגדלור האטלנטי -> שער Bab El Had -> טיסה 14:05",
+      "title_en": "Day 3 (Sun 08/11, 08:45 - 11:45): Bouregreg Jetty & Sea Bastions -> Atlantic Lighthouse Cliff -> Bab El Had -> 14:05 Flight",
+      "subtitle": "רצף חופי אחיד ונטול קפיצות פנים-עירוניות על מצוק האוקיינוס -> יציאה ב-11:30 באוטובוס AE מ-Gare de Rabat Ville לשדה התעופה RBA",
+      "subtitle_en": "Continuous coastal cliff walk (zero inland park detours) -> 11:30 ALSA Express Bus AE from Rabat Ville to RBA Airport",
+      "color": "#0284c7",
+      "stops": [
+        {
+          "id": "d3-s1",
+          "num": 9,
+          "isTier1": false,
+          "tier": "Tier 2 Spine | 18/20 (G:4 E:5 V:4 T:3 L:2)",
+          "name": "Jetée de Rabat & חומות הים התחתונות של קסבת האודאיה (שובר הגלים האטלנטי במפגש הנהר והאוקיינוס)",
+          "name_en": "Jetée de Rabat & Lower Sea Bastions of the Udayas (Atlantic Breakwater Pier at River Mouth)",
+          "map_name": "Jetee des Oudayas Rabat",
+          "lat": 34.0345,
+          "lng": -6.8385,
+          "time": "08:45 - 09:45 (60m)",
+          "time_en": "08:45 - 09:45 (60m)",
+          "cost_he": "[חוץ בלבד] חינם לחלוטין (0 MAD)",
+          "cost_en": "[Outside Only] 100% Free (0 MAD)",
+          "dur_he": "60 דק׳",
+          "dur_en": "60 mins",
+          "skip_he": "🔥 פתיחת בוקר עוצמתית על קו המים שמחברת ברצף רגלי ישיר למגדלור (במקום נסיעה לפארק הבוטני המישורי)",
+          "skip_en": "🔥 Dramatic ocean-level start connecting directly on foot to the Lighthouse coastal spine",
+          "isMust": true,
+          "in_he": "[חוץ בלבד - 100% מצוק וגלים פתוחים]: הליכה על שובר הגלים הארוך היוצא לתוך האוקיינוס האטלנטי ממש מתחת לחומות האבן של קסבת האודאיה ומבצר Sqala.",
+          "in_en": "[Outside Only - 100% Open Ocean & Bastions]: Walk out along the stone breakwater pier projecting into the Atlantic directly beneath the Udayas cliff walls and Sqala cannon bastion.",
+          "wow_he": "למה זה וואו: מבט ממפלס המים כלפי מעלה אל חומות המצודה האדירות מהמאה ה-12 כשאור הבוקר המזרחי מאיר את הקירות מעל גלי האוקיינוס המתנפצים.",
+          "wow_en": "Why It Is WOW: Eye-level ocean perspective looking straight up at the towering 12th-century Almohad cliff walls lit by morning sun above crashing Atlantic rollers.",
+          "enroute_he": "על הדרך: ירידה ישירה מהמדינה אל סוללת התותחים Sqala ושובר הגלים.",
+          "enroute_en": "En-Route: Direct 10-min walk from the Medina to the Sqala artillery platform and breakwater.",
+          "wx_he": "☀️ 20°C בבוקר: אור בוקר ישיר על המצוק.",
+          "wx_en": "☀️ 20°C morning: Crisp ocean light.",
+          "photo_tip": "עדשה 1x משובר הגלים לאחור אל מצוק הקסבה והאוקיינוס.",
+          "photo_tip_en": "1x lens from the breakwater looking back at the cliff citadel rising out of the surf.",
+          "move": "5 דק׳ הליכה רציפה לאורך סלעי החוף דרומה אל מגדלור רבאט ומבצר Borj Sirat",
+          "move_en": "5m continuous coastal walk south along the rocks to Rabat Lighthouse & Borj Sirat"
+        },
+        {
+          "id": "d3-s2",
+          "num": 10,
+          "isTier1": true,
+          "tier": "Tier 1 Anchor | 18/20 (A:5 B:4 C:5 D:4)",
+          "name": "Phare de Rabat, בורג׳ א-סיראט ושוברי הגלים של האוקיינוס האטלנטי (Corniche de Rabat)",
+          "name_en": "Rabat Lighthouse (1920), Borj Sirat Bastion & Crashing Atlantic Wave Ledges",
+          "map_name": "Rabat Lighthouse Phare de Rabat",
+          "lat": 34.0315,
+          "lng": -6.8445,
+          "time": "09:50 - 10:50 (60m)",
+          "time_en": "09:50 - 10:50 (60m)",
+          "cost_he": "חינם (0 MAD)",
+          "cost_en": "Free (0 MAD)",
+          "dur_he": "60 דק׳",
+          "dur_en": "60 mins",
+          "skip_he": "🔥 חובה - עוצמת גלי האוקיינוס מתחת לחומות האבן",
+          "skip_en": "🔥 MUST-SEE - Raw Atlantic swell crashing against 18th-century stone bastions",
+          "isMust": true,
+          "in_he": "חוץ: הליכה לאורך טיילת הסלעים מהמגדלור הלבן (1920) ומבצר Borj Sirat אל חומות קסבת האודאיה.",
+          "in_en": "Outside Coastal Walk: Walk along the rocky basalt ledges from the 1920 lighthouse and 1775 Borj Sirat bastion north toward the Udayas seawall.",
+          "wow_he": "למה זה וואו: גלי אוקיינוס אטלנטיים עצומים מתנפצים לגובה של 5-8 מטרים של קצף לבן ישר מול מבצר האבן מהמאה ה-18 והמגדלור הלבן.",
+          "wow_en": "Why It Is WOW: Raw Atlantic swells explode into 8-meter plumes of white spray against dark coastal reefs beneath an 18th-century stone fort and white lighthouse.",
+          "enroute_he": "על הדרך חזרה למדינה ולאיסוף התיק מההוסטל (10:50-11:20): חוצים דרך החומה האנדלוסית ושוק Rue Souika.",
+          "enroute_en": "En-Route back to pick up your backpack (10:50-11:20): Walk past the 17th-century Andalusian Wall.",
+          "wx_he": "☀️ 22°C עם בריזת ים נעימה.",
+          "wx_en": "☀️ 22°C with brisk ocean air.",
+          "photo_tip": "עדשה 2x שמקפיאה את התנפצות הגל על סלעי הבזלת עם חומות האודאיה והמגדלור ברקע.",
+          "photo_tip_en": "2x telephoto freezing a wave explosion against the lighthouse and ochre bastion.",
+          "move": "איסוף תיק הגב מההוסטל -> הליכה לתחנת האוטובוס מול Gare de Rabat Ville (11:30)",
+          "move_en": "Grab backpack -> walk to ALSA Bus AE stop outside Gare de Rabat Ville (11:30)"
+        },
+        {
+          "id": "d3-s3",
+          "num": 11,
+          "isTier1": false,
+          "tier": "Tier 2 Spine | 16/20 (A:4 B:4 C:4 D:4)",
+          "name": "Bab El Had & החומה האנדלוסית של המדינה (בדרך ל-Gare de Rabat Ville)",
+          "name_en": "Bab El Had Monumental Gate & Andalusian Ramparts (En-Route to Rabat Ville Bus)",
+          "map_name": "Bab El Had Rabat Morocco",
+          "lat": 34.0209,
+          "lng": -6.8416,
+          "time": "11:00 - 11:25 (25m)",
+          "time_en": "11:00 - 11:25 (25m)",
+          "cost_he": "חינם (0 MAD)",
+          "cost_en": "Free (0 MAD)",
+          "dur_he": "25 דק׳",
+          "dur_en": "25 mins",
+          "skip_he": "⚡ על הדרך הרגלית לתחנת האוטובוס לשדה",
+          "skip_en": "⚡ Directly on the walking path to the airport bus stop",
+          "isMust": false,
+          "in_he": "חוץ: מעבר מתחת לקשתות הפרסה המגולפות של שער Bab El Had מ-1197.",
+          "in_en": "Outside: Walk through the monumental 1197 Almohad horseshoe arches of Bab El Had.",
+          "wow_he": "למה זה וואו: שער מבוצר אדיר מאבן חול אדמדמה עם עיטורי צדפה גיאומטריים מתקופת תור הזהב האלמוהאדי.",
+          "wow_en": "Why It Is WOW: A towering 12th-century Almohad gate carved with concentric scalloped stone arches.",
+          "enroute_he": "על הדרך: 6 דק׳ הליכה משם לתחנת האוטובוס ב-Gare de Rabat Ville.",
+          "enroute_en": "En-Route: 6 mins flat walk from here to Gare de Rabat Ville.",
+          "wx_he": "☀️ 23°C.",
+          "wx_en": "☀️ 23°C.",
+          "photo_tip": "עדשה 1x לאורך קו הביצורים והמגדלים של החומה האנדלוסית.",
+          "photo_tip_en": "1x shot along the crenelated ochre rampart towers.",
+          "move": "עלייה לאוטובוס ALSA AE ב-11:30 מ-Gare de Rabat Ville לשדה RBA",
+          "move_en": "Board ALSA Express Bus AE at 11:30 from Gare de Rabat Ville to RBA Airport"
+        },
+        {
+          "id": "d3-s4",
+          "num": 12,
+          "isTier1": false,
+          "tier": "Tier 2 Spine | 18/20 (A:4 B:4 C:5 D:5)",
+          "name": "טרמינל RBA החדש: החתמת דלפק Ryanair על הנייר המודפס (12:00) וטיסה FR163 לדבלין (14:05)",
+          "name_en": "RBA New Glass Terminal: Mandatory Paper Boarding Pass Stamp at Ryanair Desk (12:00) & Flight FR163 (14:05)",
+          "map_name": "Rabat Sale Airport RBA",
+          "lat": 34.0515,
+          "lng": -6.7515,
+          "time": "12:00 - 14:05 (הגעה שעתיים לפני טיסה להחתמת הנייר וביקורת דרכונים)",
+          "time_en": "12:00 - 14:05 (Arrive 2h before flight for Ryanair desk stamp & passport control)",
+          "cost_he": "25 MAD (2.30€) באוטובוס AE (או 150 MAD במונית)",
+          "cost_en": "25 MAD (€2.30) on ALSA Bus AE (or 150 MAD taxi)",
+          "dur_he": "25 דק׳ נסיעה מהמרכז",
+          "dur_en": "25 mins transit from city center",
+          "skip_he": "🔥 חובה לוגיסטית: לגשת קודם לדלפק Ryanair להחתמת כרטיס הנייר!",
+          "skip_en": "🔥 MANDATORY: Stop at Ryanair check-in desk first for the paper boarding pass stamp!",
+          "isMust": true,
+          "in_he": "פנים הטרמינל החדש: החתמת הנייר בדלפק צ׳ק-אין -> בידוק ביטחוני -> החתמת יציאה בדרכון הפורטוגלי.",
+          "in_en": "Inside Terminal: Stamp printed boarding pass at Ryanair desk -> Security -> Exit stamp in Portuguese passport.",
+          "wow_he": "למה זה וואו: הטרמינל החדש של רבאט משלב מעטפת זכוכית וגג גיאומטרי בהשראת מושרביות מסורתיות, והוא קומפקטי ויעיל הרבה יותר ממרקש.",
+          "wow_en": "Why It Is WOW: Rabat’s modern terminal features a geometric mashrabiya-inspired roof canopy and smooth, stress-free queues compared to larger hubs.",
+          "enroute_he": "אם נשאר לך מזומן בדירהם (MAD), החלף או קנה מים/קפה לפני העלייה למטוס (דירהם הוא מטבע סגור).",
+          "enroute_en": "Spend or exchange any leftover Moroccan Dirham coins before boarding.",
+          "wx_he": "✈️ המראה ב-14:05 -> נחיתה בדבלין ב-17:30.",
+          "wx_en": "✈️ Depart 14:05 -> Land in Dublin at 17:30.",
+          "photo_tip": "עדשה 0.5x באולם הנוסעים מתחת לתקרת המשולשים הגיאומטרית.",
+          "photo_tip_en": "0.5x wide shot under the geometric roof canopy.",
+          "move": "טיסה ישירה FR163 לדבלין (14:05 -> 17:30)",
+          "move_en": "Direct flight FR163 to Dublin (14:05 -> 17:30)"
+        }
+      ]
+    }
+  ]
+};
+
+let activeDayFilter = 'all';
+let currentMapDisplay = 'leaflet';
+let map = null;
+let markersLayer = null;
+let polylinesLayer = null;
+let markerRefs = {};
+let activeSpeechTimer = null;
+let activeSpeakingStopId = null;
+let currentAudioSpeed = 1.0;
+
+function applySpeedToAudioPlayers() {
+  ['audio-player-short', 'audio-player-flight'].forEach(id => {
+    const p = document.getElementById(id);
+    if (p) {
+      p.defaultPlaybackRate = currentAudioSpeed;
+      p.playbackRate = currentAudioSpeed;
+    }
+  });
+}
+
+function setAudioSpeed(speed) {
+  const num = parseFloat(speed);
+  if (!isNaN(num) && num >= 0.5 && num <= 3.0) {
+    currentAudioSpeed = num;
+  }
+  document.querySelectorAll('.speed-btn').forEach(btn => {
+    const btnSpeed = parseFloat(btn.getAttribute('data-speed'));
+    const isSelected = Math.abs(btnSpeed - currentAudioSpeed) < 0.01;
+    btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+  });
+  applySpeedToAudioPlayers();
+  try {
+    localStorage.setItem('eladb_rba_trip_speed', String(currentAudioSpeed));
+  } catch (e) {}
+  // If Web Speech is actively speaking a stop right now, restart that stop at the new rate
+  if (activeSpeakingStopId && 'speechSynthesis' in window && window.speechSynthesis.speaking) {
+    const stopToReplay = activeSpeakingStopId;
+    activeSpeakingStopId = null;
+    speakStop(stopToReplay);
+  }
+}
+window.setAudioSpeed = setAudioSpeed;
+
+function setLanguage(lang) {
+  currentLang = (lang === 'en') ? 'en' : 'he';
+  const isEn = (currentLang === 'en');
+  document.documentElement.lang = isEn ? 'en' : 'he';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? "Rabat, Salé & Casablanca: Almohad Monuments, Art Deco & Zaha Hadid (06/11 10:30 - 08/11 14:05)"
+    : "רבאט, סלא וקזבלנקה: מסלול אדריכלות, אלמוהאדים, אר-דקו וזאהה חדיד (06/11 10:30 - 08/11 14:05)";
+
+  const btnHe = document.getElementById('langBtnHe');
+  const btnEn = document.getElementById('langBtnEn');
+  if (btnHe) btnHe.setAttribute('aria-pressed', isEn ? 'false' : 'true');
+  if (btnEn) btnEn.setAttribute('aria-pressed', isEn ? 'true' : 'false');
+
+  document.querySelectorAll('[data-he][data-en]').forEach(el => {
+    const val = isEn ? el.getAttribute('data-en') : el.getAttribute('data-he');
+    if (val !== null) {
+      if (val.indexOf('<') !== -1 || val.indexOf('&') !== -1) {
+        el.innerHTML = val;
+      } else {
+        el.textContent = val;
+      }
+    }
+  });
+
+  // Update default audio player sources to match selected language and preserve playback speed
+  const shortPlayer = document.getElementById('audio-player-short');
+  const flightPlayer = document.getElementById('audio-player-flight');
+  if (shortPlayer && shortPlayer.paused) {
+    shortPlayer.src = isEn ? 'audio/rba_trip_short_en.mp3' : 'audio/rba_trip_short_he.mp3';
+  }
+  if (flightPlayer && flightPlayer.paused) {
+    flightPlayer.src = isEn ? 'audio/rba_trip_flight_en.mp3' : 'audio/rba_trip_flight_he.mp3';
+  }
+  applySpeedToAudioPlayers();
+
+  // Sync theme button label
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const btnTheme = document.getElementById('btn-theme');
+  if (btnTheme) {
+    btnTheme.textContent = isEn
+      ? (isDark ? '☀️ Day Mode (D)' : '🌙 Night Mode (D)')
+      : (isDark ? '☀️ מצב יום (D)' : '🌙 מצב לילה (D)');
+  }
+
+  // Sync CC button label
+  const btnCc = document.getElementById('btn-cc-toggle');
+  if (btnCc) {
+    btnCc.textContent = isEn
+      ? (captionsEnabled ? '💬 CC: ON' : '💬 CC: OFF')
+      : (captionsEnabled ? '💬 כתוביות: פעיל' : '💬 כתוביות: כבוי');
+  }
+
+  try {
+    localStorage.setItem('eladb_rba_trip_lang', currentLang);
+  } catch (e) {}
+
+  filterDay(activeDayFilter);
+}
+window.setLang = setLanguage;
+window.setLanguage = setLanguage;
+
+function toggleCaptions() {
+  captionsEnabled = !captionsEnabled;
+  const box = document.getElementById('live-caption-box');
+  const btn = document.getElementById('btn-cc-toggle');
+  if (box) box.classList.toggle('visible', captionsEnabled);
+  if (btn) {
+    btn.setAttribute('aria-pressed', captionsEnabled ? 'true' : 'false');
+    btn.textContent = (currentLang === 'en')
+      ? (captionsEnabled ? '💬 CC: ON' : '💬 CC: OFF')
+      : (captionsEnabled ? '💬 כתוביות: פעיל' : '💬 כתוביות: כבוי');
+  }
+}
+
+function updateLiveCaption(text) {
+  const el = document.getElementById('live-caption-text');
+  if (el) el.textContent = text;
+}
+
+function stopLiveNarrator() {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  if (activeSpeechTimer) {
+    clearInterval(activeSpeechTimer);
+    activeSpeechTimer = null;
+  }
+  const shortPlayer = document.getElementById('audio-player-short');
+  const flightPlayer = document.getElementById('audio-player-flight');
+  if (shortPlayer && !shortPlayer.paused) shortPlayer.pause();
+  if (flightPlayer && !flightPlayer.paused) flightPlayer.pause();
+
+  lastSyncedAudioStopId = null;
+  activeHighlightedStopId = null;
+  document.querySelectorAll('.stop-card.speaking-active').forEach(c => c.classList.remove('speaking-active'));
+  document.querySelectorAll('.custom-pin-inner').forEach(el => el.classList.remove('pin-speaking-active'));
+  document.querySelectorAll('.jump-stop-chip').forEach(ch => ch.setAttribute('aria-pressed', 'false'));
+  document.querySelectorAll('.btn-stop-speak[aria-pressed="true"]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  const bShort = document.getElementById('btn-tts-short');
+  const bFlight = document.getElementById('btn-tts-flight');
+  if (bShort) bShort.setAttribute('aria-pressed', 'false');
+  if (bFlight) bFlight.setAttribute('aria-pressed', 'false');
+  activeSpeakingStopId = null;
+}
+
+function speakTextWithWebSpeech(text, onDone) {
+  if (!('speechSynthesis' in window)) {
+    updateLiveCaption(text);
+    if (onDone) onDone();
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  window._activeUtterance = utter;
+  const targetLang = (currentLang === 'en') ? 'en-US' : 'he-IL';
+  utter.lang = targetLang;
+  if (typeof window.pickStandardSpeechVoice === 'function') {
+    const v = window.pickStandardSpeechVoice(targetLang);
+    if (v) utter.voice = v;
+  }
+  utter.rate = Math.max(0.5, Math.min(3.0, currentAudioSpeed || 1.0));
+  utter.pitch = 1.0;
+  updateLiveCaption(text);
+  if (activeSpeechTimer) clearInterval(activeSpeechTimer);
+  activeSpeechTimer = setInterval(() => {
+    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+      window.speechSynthesis.pause();
+      window.speechSynthesis.resume();
+    }
+  }, 10000);
+  utter.onend = () => {
+    if (activeSpeechTimer) { clearInterval(activeSpeechTimer); activeSpeechTimer = null; }
+    if (onDone) onDone();
+  };
+  utter.onerror = () => {
+    if (activeSpeechTimer) { clearInterval(activeSpeechTimer); activeSpeechTimer = null; }
+    if (onDone) onDone();
+  };
+  window.speechSynthesis.speak(utter);
+}
+
+function buildStopNarrationText(stop) {
+  const isEn = (currentLang === 'en');
+  if (isEn) {
+    return `Stop ${stop.num}: ${stop.name_en}. Cost: ${stop.cost_en}. Inside or Outside: ${stop.in_en} Weather Plan A: ${stop.wx_en} En-route sights and story: ${stop.enroute_en} Recommended time: ${stop.dur_en}. Priority if short on time: ${stop.skip_en}. ${stop.wow_en} Smartphone framing: ${stop.photo_tip_en} Transit: ${stop.move_en}`;
+  }
+  return `תחנה מספר ${stop.num}: ${stop.name}. עלות כניסה: ${stop.cost_he}. האם להיכנס פנימה או רק מבחוץ: ${stop.in_he} התאמת מזג אוויר: ${stop.wx_he} מה רואים על הדרך וסיפור מעבר: ${stop.enroute_he} זמן מומלץ במקום: ${stop.dur_he}. האם ניתן לוותר בבלת"ם: ${stop.skip_he}. ${stop.wow_he} זווית צילום: ${stop.photo_tip} הגעה והמשך: ${stop.move}`;
+}
+
+function speakStop(stopId) {
+  if (activeSpeakingStopId === stopId) {
+    stopLiveNarrator();
+    return;
+  }
+  stopLiveNarrator();
+  const info = getStopById(stopId);
+  if (!info) return;
+  const foundStop = info.stop;
+  activeSpeakingStopId = stopId;
+  highlightStopAndFocusMap(stopId, true);
+
+  // Jump the neural MP3 player directly to this stop's timestamp so it plays with studio audio & speed control, with Web Speech fallback
+  const pShort = document.getElementById('audio-player-short');
+  if (pShort) {
+    jumpAudioToStop(foundStop.num);
+    return;
+  }
+  const scriptText = buildStopNarrationText(foundStop);
+  speakTextWithWebSpeech(scriptText, () => {
+    activeSpeakingStopId = null;
+  });
+}
+
+function speakCustomBlock(blockKey) {
+  stopLiveNarrator();
+  if (blockKey === 'intro') {
+    const txt = (currentLang === 'en') ? CITY_INTRO_NARRATION.en : CITY_INTRO_NARRATION.he;
+    speakTextWithWebSpeech(txt);
+  }
+}
+
+function startLiveNarrator(mode) {
+  stopLiveNarrator();
+  const isEn = (currentLang === 'en');
+  const bShort = document.getElementById('btn-tts-short');
+  const bFlight = document.getElementById('btn-tts-flight');
+  if (mode === 'short' && bShort) bShort.setAttribute('aria-pressed', 'true');
+  if (mode === 'flight' && bFlight) bFlight.setAttribute('aria-pressed', 'true');
+
+  // Play the pre-generated high-quality neural MP3 directly in the browser AND step through stops!
+  const player = document.getElementById(mode === 'flight' ? 'audio-player-flight' : 'audio-player-short');
+  if (player) {
+    const wantSrc = (mode === 'flight')
+      ? (isEn ? 'audio/rba_trip_flight_en.mp3' : 'audio/rba_trip_flight_he.mp3')
+      : (isEn ? 'audio/rba_trip_short_en.mp3' : 'audio/rba_trip_short_he.mp3');
+    if (player.getAttribute('src') !== wantSrc) {
+      player.setAttribute('src', wantSrc);
+    }
+    player.defaultPlaybackRate = currentAudioSpeed;
+    player.playbackRate = currentAudioSpeed;
+    player.currentTime = 0;
+    player.play().catch(() => {
+      // Fallback to Web Speech queue if audio autoplay blocked
+      runSequentialWebSpeechTour();
+    });
+    updateLiveCaption(
+      isEn
+        ? (mode === 'flight'
+            ? `Playing Full In-Flight Deep-Dive Audio (${currentAudioSpeed}x speed)... Use the speed buttons above or download 1x / 2x MP3 below.`
+            : `Playing Practical 12-Stop Audio Guide (${currentAudioSpeed}x speed)... Use the speed buttons above or download 1x / 2x MP3 below.`)
+        : (mode === 'flight'
+            ? `מנגן כעת את מהדורת הטיסה והסיפורים (במהירות ${currentAudioSpeed}x)... ניתן לשנות מהירות למעלה או להוריד MP3 רגיל / x2 למטה.`
+            : `מנגן כעת את מדריך השטח המעשי לכל 12 התחנות (במהירות ${currentAudioSpeed}x)... ניתן לשנות מהירות למעלה או להוריד MP3 רגיל / x2 למטה.`)
+    );
+  } else {
+    runSequentialWebSpeechTour();
+  }
+}
+
+function runSequentialWebSpeechTour() {
+  const queue = [];
+  queue.push({ stop: null, text: (currentLang === 'en') ? CITY_INTRO_NARRATION.en : CITY_INTRO_NARRATION.he });
+  ITINERARY_DATA.days.forEach(d => {
+    d.stops.forEach(s => {
+      queue.push({ stop: s, text: buildStopNarrationText(s) });
+    });
+  });
+  let idx = 0;
+  function nextStep() {
+    if (idx >= queue.length) {
+      stopLiveNarrator();
+      return;
+    }
+    const item = queue[idx++];
+    document.querySelectorAll('.stop-card.speaking-active').forEach(c => c.classList.remove('speaking-active'));
+    if (item.stop) {
+      const card = document.getElementById('card-' + item.stop.id);
+      if (card) {
+        card.classList.add('speaking-active');
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      focusStop(item.stop.id, item.stop.lat, item.stop.lng);
+    }
+    speakTextWithWebSpeech(item.text, nextStep);
+  }
+  nextStep();
+}
+
+function renderItinerary() {
+  const container = document.getElementById('itinerary-content');
+  if (!container) return;
+  const isEn = (currentLang === 'en');
+  const daysToShow = activeDayFilter === 'all'
+    ? ITINERARY_DATA.days
+    : ITINERARY_DATA.days.filter(d => d.day === activeDayFilter);
+
+  let html = '';
+  daysToShow.forEach(dayObj => {
+    const dTitle = isEn ? dayObj.title_en : dayObj.title;
+    const dSub = isEn ? dayObj.subtitle_en : dayObj.subtitle;
+    html += `
+      <section class="day-section" aria-label="${dTitle}">
+        <div class="day-header" style="background:${dayObj.color};">
+          <span>${dTitle}</span>
+          <span style="font-size:0.76rem;font-weight:600;opacity:0.95;">${dSub}</span>
+        </div>
+    `;
+    dayObj.stops.forEach(stop => {
+      const sName = isEn ? stop.name_en : stop.name;
+      const sTime = isEn ? stop.time_en : stop.time;
+      const sWow = isEn ? stop.wow_en : stop.wow_he;
+      const sPhoto = isEn ? stop.photo_tip_en : stop.photo_tip;
+      const sMove = isEn ? stop.move_en : stop.move;
+      const sCost = isEn ? stop.cost_en : stop.cost_he;
+      const sInOut = isEn ? stop.in_en : stop.in_he;
+      const sDur = isEn ? stop.dur_en : stop.dur_he;
+      const sSkip = isEn ? stop.skip_en : stop.skip_he;
+      const costLabel = isEn ? '🎟️ Cost:' : '🎟️ עלות:';
+      const inOutLabel = isEn ? '🏛️ Inside/Outside:' : '🏛️ פנים/חוץ:';
+      const durLabel = isEn ? '⏳ Stay:' : '⏳ שהייה:';
+      const skipBg = stop.isMust ? 'rgba(245, 158, 11, 0.16)' : 'rgba(56, 189, 248, 0.14)';
+      const skipBorder = stop.isMust ? '#f59e0b' : '#38bdf8';
+      const photoPrefix = isEn ? '📸 Smartphone Angle: ' : '📸 זווית סמארטפון: ';
+      const listenLabel = isEn ? '🔊 Listen' : '🔊 קריין';
+      const gimgLink = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(stop.map_name + ' architecture');
+      const gmapsLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(stop.map_name);
+      const badgeClass = stop.isTier1 ? 'badge badge-t1' : 'badge badge-t2';
+      const cardClass = stop.isTier1 ? 'stop-card tier-1' : 'stop-card tier-2';
+      const starPrefix = stop.isTier1 ? '★ ' : '● ';
+      html += `
+        <article class="${cardClass}" id="card-${stop.id}">
+          <div class="stop-top">
+            <button type="button" class="stop-title-btn" onclick="focusStop('${stop.id}', ${stop.lat}, ${stop.lng})">
+              <span>${starPrefix}#${stop.num} ${sName}</span>
+            </button>
+            <div class="stop-actions-right">
+              <span class="now-playing-pill">${isEn ? '🔊 Now Playing' : '🔊 מנגן כעת'}</span>
+              <button type="button" id="btn-speak-${stop.id}" class="btn-stop-speak" aria-pressed="false" onclick="speakStop('${stop.id}')">${listenLabel}</button>
+              <span class="${badgeClass}">[${stop.tier}]</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:0.76rem;padding:5px 8px;margin-bottom:5px;border-radius:5px;background:${skipBg};border-inline-start:3px solid ${skipBorder};">
+            <span><strong>${costLabel}</strong> ${sCost}</span>
+            <span>|</span>
+            <span><strong>${durLabel}</strong> ${sDur}</span>
+            <span>|</span>
+            <span><strong>${sSkip}</strong></span>
+            <div style="width:100%;margin-top:2px;padding-top:3px;border-top:1px dashed var(--border);"><strong>${inOutLabel}</strong> ${sInOut}</div>
+          </div>
+          <div class="wow-line">✨ ${sWow}</div>
+          <div style="font-size:0.77rem;padding:5px 8px;margin-bottom:5px;border-radius:5px;background:rgba(16, 185, 129, 0.11);border-inline-start:3px solid #10b981;color:var(--text);">
+            <strong>${isEn ? '🛤️ En-Route Sights &amp; Story:' : '🛤️ מה רואים על הדרך וסיפור מעבר:'}</strong> ${isEn ? stop.enroute_en : stop.enroute_he}
+          </div>
+          <div style="font-size:0.75rem;padding:4px 8px;margin-bottom:5px;border-radius:5px;background:rgba(99, 102, 241, 0.11);border-inline-start:3px solid #6366f1;color:var(--text);">
+            <strong>${isEn ? '🌦️ Weather-Smart Plan A:' : '🌦️ התאמת מזג אוויר (Plan A):'}</strong> ${isEn ? stop.wx_en : stop.wx_he}
+          </div>
+          <div class="photo-line">${photoPrefix}${sPhoto}</div>
+          <div class="move-line">
+            <span>⏰ <strong>${sTime}</strong> | 🚶/🚆 ${sMove}</span>
+            <span class="ext-links">
+              <a href="${gmapsLink}" target="_blank" rel="noopener">📍 Google Maps</a>
+              <a href="${gimgLink}" target="_blank" rel="noopener">🖼️ Google Images</a>
+            </span>
+          </div>
+        </article>
+      `;
+    });
+    html += '</section>';
+  });
+  container.innerHTML = html;
+  buildJumpStopChips();
+}
+
+function switchMapDisplay(mode) {
+  currentMapDisplay = mode;
+  const mapEl = document.getElementById('map');
+  const svgEl = document.getElementById('svg-fallback');
+  const btnLeaflet = document.getElementById('btn-map-leaflet');
+  const btnSvg = document.getElementById('btn-map-svg');
+
+  if (mode === 'svg') {
+    if (mapEl) mapEl.style.display = 'none';
+    if (svgEl) {
+      svgEl.style.display = 'block';
+      renderSvgFallback();
+    }
+    if (btnSvg) btnSvg.setAttribute('aria-pressed', 'true');
+    if (btnLeaflet) btnLeaflet.setAttribute('aria-pressed', 'false');
+  } else {
+    if (typeof L === 'undefined') {
+      switchMapDisplay('svg');
+      return;
+    }
+    if (svgEl) svgEl.style.display = 'none';
+    if (mapEl) mapEl.style.display = 'block';
+    if (btnLeaflet) btnLeaflet.setAttribute('aria-pressed', 'true');
+    if (btnSvg) btnSvg.setAttribute('aria-pressed', 'false');
+    if (!map) {
+      initMap();
+    } else {
+      setTimeout(() => {
+        map.invalidateSize();
+        updateMapMarkers();
+      }, 150);
+    }
+  }
+}
+
+function initMap() {
+  try {
+    if (typeof L === 'undefined') throw new Error('Leaflet offline');
+    const mapEl = document.getElementById('map');
+    if (mapEl && mapEl._leaflet_id) {
+      mapEl._leaflet_id = null;
+      mapEl.innerHTML = '';
+    }
+    map = L.map('map').setView([33.82, -7.2], 9);
+    const tileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      attribution: '&copy; Google Maps &copy; OpenStreetMap',
+      maxZoom: 20
+    }).addTo(map);
+    let tileErrors = 0;
+    let switchedToOsm = false;
+    tileLayer.on('tileerror', () => {
+      tileErrors++;
+      if (tileErrors > 4 && !switchedToOsm) {
+        switchedToOsm = true;
+        tileErrors = 0;
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap',
+          maxZoom: 19
+        }).addTo(map);
+      } else if (tileErrors > 12) {
+        switchMapDisplay('svg');
+      }
+    });
+    markersLayer = L.layerGroup().addTo(map);
+    polylinesLayer = L.layerGroup().addTo(map);
+    updateMapMarkers();
+    [120, 350, 800].forEach(ms => {
+      setTimeout(() => {
+        if (map && currentMapDisplay === 'leaflet') {
+          map.invalidateSize();
+          updateMapMarkers();
+        }
+      }, ms);
+    });
+    if ('ResizeObserver' in window && mapEl) {
+      const ro = new ResizeObserver(() => {
+        if (map && currentMapDisplay === 'leaflet') {
+          map.invalidateSize();
+        }
+      });
+      ro.observe(mapEl);
+    }
+  } catch (e) {
+    switchMapDisplay('svg');
+  }
+}
+
+function updateMapMarkers() {
+  if (currentMapDisplay === 'svg') {
+    renderSvgFallback();
+    return;
+  }
+  if (!map || !markersLayer || !polylinesLayer) return;
+  markersLayer.clearLayers();
+  polylinesLayer.clearLayers();
+  markerRefs = {};
+
+  const isEn = (currentLang === 'en');
+  const dirAttr = isEn ? 'ltr' : 'rtl';
+  const daysToShow = activeDayFilter === 'all'
+    ? ITINERARY_DATA.days
+    : ITINERARY_DATA.days.filter(d => d.day === activeDayFilter);
+
+  const allCoords = [];
+  daysToShow.forEach(dayObj => {
+    const dayCoords = [];
+    dayObj.stops.forEach(stop => {
+      const coord = [stop.lat, stop.lng];
+      dayCoords.push(coord);
+      allCoords.push(coord);
+
+      const borderStyle = stop.isTier1 ? '3px solid #fef08a' : '2px solid #ffffff';
+      const size = stop.isTier1 ? 30 : 24;
+      const label = stop.isTier1 ? ('★' + stop.num) : String(stop.num);
+      const isPinActive = (activeHighlightedStopId === stop.id) ? ' pin-speaking-active' : '';
+      const icon = L.divIcon({
+        className: 'custom-pin',
+        html: `<div id="map-pin-${stop.id}" class="custom-pin-inner${isPinActive}" style="background:${dayObj.color};color:#ffffff;width:${size}px;height:${size}px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.72rem;border:${borderStyle};box-shadow:0 2px 5px rgba(0,0,0,0.45);">${label}</div>`,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size / 2]
+      });
+
+      const sName = isEn ? stop.name_en : stop.name;
+      const sTime = isEn ? stop.time_en : stop.time;
+      const sWow = isEn ? stop.wow_en : stop.wow_he;
+      const sPhoto = isEn ? stop.photo_tip_en : stop.photo_tip;
+      const sMove = isEn ? stop.move_en : stop.move;
+      const gimgLink = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(stop.map_name + ' architecture');
+      const gmapsLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(stop.map_name);
+
+      const marker = L.marker(coord, { icon }).bindPopup(`
+        <div style="direction:${dirAttr};text-align:start;font-family:sans-serif;min-width:250px;color:#0f172a;">
+          <div style="font-weight:800;font-size:0.9rem;margin-bottom:3px;">#${stop.num}: ${sName}</div>
+          <div style="font-size:0.75rem;color:#b45309;font-weight:800;margin-bottom:4px;">[${stop.tier}]</div>
+          <div style="font-size:0.78rem;color:#334155;margin-bottom:5px;">⏰ ${sTime}</div>
+          <div style="font-size:0.75rem;color:#065f46;background:#ecfdf5;padding:4px 6px;border-radius:4px;margin-bottom:5px;">✨ ${sWow}</div>
+          <div style="font-size:0.76rem;color:#581c87;background:#f3e8ff;padding:4px 6px;border-radius:4px;margin-bottom:5px;">📸 ${sPhoto}</div>
+          <div style="font-size:0.75rem;color:#475569;margin-bottom:6px;">🚶/🚆 ${sMove}</div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <a href="${gmapsLink}" target="_blank" rel="noopener" style="font-size:0.78rem;color:#1d4ed8;font-weight:700;">📍 Google Maps</a>
+            <a href="${gimgLink}" target="_blank" rel="noopener" style="font-size:0.78rem;color:#7c3aed;font-weight:700;">🖼️ Google Images</a>
+          </div>
+        </div>
+      `);
+      marker.addTo(markersLayer);
+      markerRefs[stop.id] = marker;
+    });
+
+    if (dayCoords.length > 1) {
+      L.polyline(dayCoords, {
+        color: dayObj.color,
+        weight: 4,
+        opacity: 0.85,
+        dashArray: '6, 6'
+      }).addTo(polylinesLayer);
+    }
+  });
+
+  if (allCoords.length > 0) {
+    map.fitBounds(allCoords, { padding: [32, 32] });
+  }
+}
+
+const AUDIO_STOP_TIMELINE = {
+  "rba_short_he": [
+    {
+      "id": "d1-s1",
+      "num": 1,
+      "start": 53.4,
+      "end": 133.8
+    },
+    {
+      "id": "d1-s2",
+      "num": 2,
+      "start": 133.8,
+      "end": 215.8
+    },
+    {
+      "id": "d1-s3",
+      "num": 3,
+      "start": 215.8,
+      "end": 288.3
+    },
+    {
+      "id": "d1-s4",
+      "num": 4,
+      "start": 288.3,
+      "end": 393.8
+    },
+    {
+      "id": "d2-s1",
+      "num": 5,
+      "start": 393.8,
+      "end": 507.8
+    },
+    {
+      "id": "d2-s2",
+      "num": 6,
+      "start": 507.8,
+      "end": 593.6
+    },
+    {
+      "id": "d2-s3",
+      "num": 7,
+      "start": 593.6,
+      "end": 669.3
+    },
+    {
+      "id": "d2-s4",
+      "num": 8,
+      "start": 669.3,
+      "end": 728.9
+    },
+    {
+      "id": "d3-s1",
+      "num": 9,
+      "start": 728.9,
+      "end": 812.3
+    },
+    {
+      "id": "d3-s2",
+      "num": 10,
+      "start": 812.3,
+      "end": 872.0
+    },
+    {
+      "id": "d3-s3",
+      "num": 11,
+      "start": 872.0,
+      "end": 921.4
+    },
+    {
+      "id": "d3-s4",
+      "num": 12,
+      "start": 921.4,
+      "end": 995.3
+    }
+  ],
+  "rba_short_en": [
+    {
+      "id": "d1-s1",
+      "num": 1,
+      "start": 46.3,
+      "end": 112.0
+    },
+    {
+      "id": "d1-s2",
+      "num": 2,
+      "start": 112.0,
+      "end": 179.8
+    },
+    {
+      "id": "d1-s3",
+      "num": 3,
+      "start": 179.8,
+      "end": 239.3
+    },
+    {
+      "id": "d1-s4",
+      "num": 4,
+      "start": 239.3,
+      "end": 326.8
+    },
+    {
+      "id": "d2-s1",
+      "num": 5,
+      "start": 326.8,
+      "end": 417.2
+    },
+    {
+      "id": "d2-s2",
+      "num": 6,
+      "start": 417.2,
+      "end": 487.7
+    },
+    {
+      "id": "d2-s3",
+      "num": 7,
+      "start": 487.7,
+      "end": 554.2
+    },
+    {
+      "id": "d2-s4",
+      "num": 8,
+      "start": 554.2,
+      "end": 607.3
+    },
+    {
+      "id": "d3-s1",
+      "num": 9,
+      "start": 607.3,
+      "end": 676.9
+    },
+    {
+      "id": "d3-s2",
+      "num": 10,
+      "start": 676.9,
+      "end": 729.6
+    },
+    {
+      "id": "d3-s3",
+      "num": 11,
+      "start": 729.6,
+      "end": 771.5
+    },
+    {
+      "id": "d3-s4",
+      "num": 12,
+      "start": 771.5,
+      "end": 831.0
+    }
+  ],
+  "rba_flight_he": [
+    {
+      "id": "d1-s1",
+      "num": 1,
+      "start": 183.4,
+      "end": 308.5
+    },
+    {
+      "id": "d1-s2",
+      "num": 2,
+      "start": 308.5,
+      "end": 427.8
+    },
+    {
+      "id": "d1-s3",
+      "num": 3,
+      "start": 427.8,
+      "end": 540.6
+    },
+    {
+      "id": "d1-s4",
+      "num": 4,
+      "start": 540.6,
+      "end": 702.9
+    },
+    {
+      "id": "d2-s1",
+      "num": 5,
+      "start": 702.9,
+      "end": 865.9
+    },
+    {
+      "id": "d2-s2",
+      "num": 6,
+      "start": 865.9,
+      "end": 1001.4
+    },
+    {
+      "id": "d2-s3",
+      "num": 7,
+      "start": 1001.4,
+      "end": 1124.5
+    },
+    {
+      "id": "d2-s4",
+      "num": 8,
+      "start": 1124.5,
+      "end": 1221.3
+    },
+    {
+      "id": "d3-s1",
+      "num": 9,
+      "start": 1221.3,
+      "end": 1344.7
+    },
+    {
+      "id": "d3-s2",
+      "num": 10,
+      "start": 1344.7,
+      "end": 1445.7
+    },
+    {
+      "id": "d3-s3",
+      "num": 11,
+      "start": 1445.7,
+      "end": 1526.9
+    },
+    {
+      "id": "d3-s4",
+      "num": 12,
+      "start": 1526.9,
+      "end": 1646.5
+    }
+  ],
+  "rba_flight_en": [
+    {
+      "id": "d1-s1",
+      "num": 1,
+      "start": 154.4,
+      "end": 258.5
+    },
+    {
+      "id": "d1-s2",
+      "num": 2,
+      "start": 258.5,
+      "end": 360.5
+    },
+    {
+      "id": "d1-s3",
+      "num": 3,
+      "start": 360.5,
+      "end": 451.4
+    },
+    {
+      "id": "d1-s4",
+      "num": 4,
+      "start": 451.4,
+      "end": 588.2
+    },
+    {
+      "id": "d2-s1",
+      "num": 5,
+      "start": 588.2,
+      "end": 718.3
+    },
+    {
+      "id": "d2-s2",
+      "num": 6,
+      "start": 718.3,
+      "end": 829.4
+    },
+    {
+      "id": "d2-s3",
+      "num": 7,
+      "start": 829.4,
+      "end": 934.1
+    },
+    {
+      "id": "d2-s4",
+      "num": 8,
+      "start": 934.1,
+      "end": 1018.9
+    },
+    {
+      "id": "d3-s1",
+      "num": 9,
+      "start": 1018.9,
+      "end": 1121.6
+    },
+    {
+      "id": "d3-s2",
+      "num": 10,
+      "start": 1121.6,
+      "end": 1207.6
+    },
+    {
+      "id": "d3-s3",
+      "num": 11,
+      "start": 1207.6,
+      "end": 1276.6
+    },
+    {
+      "id": "d3-s4",
+      "num": 12,
+      "start": 1276.6,
+      "end": 1371.3
+    }
+  ]
+};
+
+let activeHighlightedStopId = null;
+let lastSyncedAudioStopId = null;
+
+function getStopById(stopId) {
+  let found = null;
+  ITINERARY_DATA.days.forEach(d => {
+    d.stops.forEach(s => {
+      if (s.id === stopId) found = { stop: s, day: d.day };
+    });
+  });
+  return found;
+}
+
+function getStopByNum(num) {
+  let found = null;
+  ITINERARY_DATA.days.forEach(d => {
+    d.stops.forEach(s => {
+      if (s.num === num) found = { stop: s, day: d.day };
+    });
+  });
+  return found;
+}
+
+function highlightStopAndFocusMap(stopId, scrollCard = true) {
+  const info = getStopById(stopId);
+  if (!info) return;
+  const { stop, day } = info;
+
+  // Ensure the stop's day is visible in the list and on the map
+  if (activeDayFilter !== 'all' && String(activeDayFilter) !== String(day)) {
+    filterDay('all');
+  }
+
+  activeHighlightedStopId = stopId;
+
+  // 1. Highlight stop card in sidebar list and scroll it into view
+  document.querySelectorAll('.stop-card.speaking-active').forEach(c => c.classList.remove('speaking-active'));
+  document.querySelectorAll('.btn-stop-speak').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  const card = document.getElementById('card-' + stopId);
+  const btn = document.getElementById('btn-speak-' + stopId);
+  if (card) {
+    card.classList.add('speaking-active');
+    if (scrollCard) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+  if (btn) btn.setAttribute('aria-pressed', 'true');
+
+  // 2. Highlight active jump chip (#1..#22)
+  document.querySelectorAll('.jump-stop-chip').forEach(ch => {
+    const isThis = ch.dataset.stopId === stopId;
+    ch.setAttribute('aria-pressed', isThis ? 'true' : 'false');
+  });
+
+  // 3. Highlight active pin on Leaflet map & pan/zoom map to stop
+  document.querySelectorAll('.custom-pin-inner').forEach(el => el.classList.remove('pin-speaking-active'));
+  const pinEl = document.getElementById('map-pin-' + stopId);
+  if (pinEl) pinEl.classList.add('pin-speaking-active');
+
+  if (map && markerRefs[stopId] && currentMapDisplay === 'leaflet') {
+    map.flyTo([stop.lat, stop.lng], 15, { animate: true, duration: 0.75 });
+    markerRefs[stopId].openPopup();
+  } else if (currentMapDisplay === 'svg') {
+    renderSvgFallback();
+  }
+
+  // 4. Update Live Caption banner with current stop details
+  const isEn = (currentLang === 'en');
+  const sName = isEn ? stop.name_en : stop.name;
+  const sCost = isEn ? stop.cost_en : stop.cost_he;
+  const sInOut = isEn ? stop.in_en : stop.in_he;
+  const sWow = isEn ? stop.wow_en : stop.wow_he;
+  updateLiveCaption(
+    isEn
+      ? `🔊 Now Narrating Stop #${stop.num}/12: ${sName} | Cost: ${sCost} | ${sInOut}: ${sWow}`
+      : `🔊 מקריא כעת תחנה #${stop.num}/12: ${sName} | עלות: ${sCost} | ${sInOut}: ${sWow}`
+  );
+}
+
+function focusStop(stopId, lat, lng) {
+  highlightStopAndFocusMap(stopId, false);
+}
+
+function getTrackKeyForPlayer(player) {
+  const src = (player && player.getAttribute('src')) || '';
+  if (src.includes('flight_en')) return 'rba_flight_en';
+  if (src.includes('flight_he')) return 'rba_flight_he';
+  if (src.includes('short_en')) return 'rba_short_en';
+  return 'rba_short_he';
+}
+
+function syncAudioPlayerToStop(player, forceScroll = false) {
+  if (!player) return;
+  const trackKey = getTrackKeyForPlayer(player);
+  const cues = AUDIO_STOP_TIMELINE[trackKey];
+  if (!cues || !cues.length) return;
+  // If user selected a _2x file directly or standard 1x file, scale by duration ratio
+  const nominalEnd = cues[cues.length - 1].end;
+  const actualDur = (player.duration && isFinite(player.duration) && player.duration > 10) ? player.duration : nominalEnd;
+  const scale = nominalEnd / actualDur;
+  const effectiveSec = player.currentTime * scale;
+
+  let matchedStopId = null;
+  for (let i = 0; i < cues.length; i++) {
+    if (effectiveSec >= cues[i].start - 0.5 && effectiveSec < cues[i].end) {
+      matchedStopId = cues[i].id;
+      break;
+    }
+  }
+
+  const introChip = document.getElementById('jump-chip-intro');
+  if (!matchedStopId) {
+    if (introChip) introChip.setAttribute('aria-pressed', 'true');
+    document.querySelectorAll('#jump-chips-container .jump-stop-chip').forEach(c => c.setAttribute('aria-pressed', 'false'));
+    if (lastSyncedAudioStopId !== 'intro') {
+      lastSyncedAudioStopId = 'intro';
+      const isEn = (currentLang === 'en');
+      updateLiveCaption(
+        isEn
+          ? '🔊 Playing Intro: Historical Background, €1.70 Airport Tram Rule & Contactless vs. Cash Guide (Map & cards will auto-focus at Stop #1)...'
+          : '🔊 מנגן פתיחה: רקע היסטורי, טריק ה-1.70€ מהשדה וכללי קונטקטלס מול מזומן (המפה והכרטיסיות יתמקדו אוטומטית החל מתחנה #1)...'
+      );
+    }
+    return;
+  }
+
+  if (introChip) introChip.setAttribute('aria-pressed', 'false');
+  if (forceScroll || matchedStopId !== lastSyncedAudioStopId) {
+    lastSyncedAudioStopId = matchedStopId;
+    highlightStopAndFocusMap(matchedStopId, true);
+  }
+}
+
+function jumpAudioToStop(stopNum) {
+  // Determine active player (prefer currently playing player, else short player)
+  const pShort = document.getElementById('audio-player-short');
+  const pFlight = document.getElementById('audio-player-flight');
+  const player = (pFlight && !pFlight.paused) ? pFlight : pShort;
+  if (!player) return;
+
+  const isEn = (currentLang === 'en');
+  const isFlight = (player.id === 'audio-player-flight');
+  const wantSrc = isFlight
+    ? (isEn ? 'audio/rba_trip_flight_en.mp3' : 'audio/rba_trip_flight_he.mp3')
+    : (isEn ? 'audio/rba_trip_short_en.mp3' : 'audio/rba_trip_short_he.mp3');
+  if (player.getAttribute('src') !== wantSrc) {
+    player.setAttribute('src', wantSrc);
+  }
+
+  const trackKey = getTrackKeyForPlayer(player);
+  const cues = AUDIO_STOP_TIMELINE[trackKey] || [];
+  if (stopNum === 0) {
+    lastSyncedAudioStopId = null;
+    player.currentTime = 0;
+    player.defaultPlaybackRate = currentAudioSpeed;
+    player.playbackRate = currentAudioSpeed;
+    player.play().catch(() => {});
+    syncAudioPlayerToStop(player, true);
+    return;
+  }
+
+  const cue = cues.find(c => c.num === stopNum);
+  if (!cue) return;
+  highlightStopAndFocusMap(cue.id, true);
+  lastSyncedAudioStopId = cue.id;
+
+  const applySeekAndPlay = () => {
+    const nominalEnd = cues[cues.length - 1].end;
+    const actualDur = (player.duration && isFinite(player.duration) && player.duration > 10) ? player.duration : nominalEnd;
+    const scale = actualDur / nominalEnd;
+    player.currentTime = Math.max(0, cue.start * scale);
+    player.defaultPlaybackRate = currentAudioSpeed;
+    player.playbackRate = currentAudioSpeed;
+    player.play().catch(() => {});
+  };
+
+  if (player.readyState >= 1) {
+    applySeekAndPlay();
+  } else {
+    player.addEventListener('loadedmetadata', applySeekAndPlay, { once: true });
+    player.load();
+  }
+}
+
+function buildJumpStopChips() {
+  const container = document.getElementById('jump-chips-container');
+  if (!container) return;
+  let chipsHtml = '';
+  ITINERARY_DATA.days.forEach(d => {
+    d.stops.forEach(s => {
+      const isPressed = (activeHighlightedStopId === s.id) ? 'true' : 'false';
+      const titleText = (currentLang === 'en') ? `#${s.num} ${s.name_en}` : `#${s.num} ${s.name}`;
+      chipsHtml += `<button type="button" class="jump-stop-chip" data-stop-id="${s.id}" aria-pressed="${isPressed}" title="${titleText}" onclick="jumpAudioToStop(${s.num})">#${s.num}</button>`;
+    });
+  });
+  container.innerHTML = chipsHtml;
+}
+
+function filterDay(day) {
+  activeDayFilter = day;
+  document.querySelectorAll('.day-tab').forEach(btn => {
+    const isActive = String(btn.dataset.day) === String(day);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+  const labelEl = document.getElementById('active-filter-label');
+  if (labelEl) {
+    const isEn = (currentLang === 'en');
+    labelEl.textContent = isEn
+      ? (day === 'all' ? 'Showing: All 3 Days' : ('Showing: Day ' + day))
+      : (day === 'all' ? 'מציג: כל 3 הימים' : ('מציג: יום ' + day));
+  }
+  renderItinerary();
+  updateMapMarkers();
+}
+
+function renderSvgFallback() {
+  const el = document.getElementById('svg-fallback');
+  if (!el) return;
+  const daysToShow = activeDayFilter === 'all'
+    ? ITINERARY_DATA.days
+    : ITINERARY_DATA.days.filter(d => d.day === activeDayFilter);
+
+  const stops = [];
+  daysToShow.forEach(d => {
+    d.stops.forEach(s => stops.push({ ...s, color: d.color }));
+  });
+  if (!stops.length) return;
+
+  let minLat = Math.min(...stops.map(s => s.lat)) - 0.02;
+  let maxLat = Math.max(...stops.map(s => s.lat)) + 0.02;
+  let minLng = Math.min(...stops.map(s => s.lng)) - 0.03;
+  let maxLng = Math.max(...stops.map(s => s.lng)) + 0.03;
+
+  const W = 820, H = 500;
+  const project = (lat, lng) => {
+    const x = ((lng - minLng) / (maxLng - minLng)) * (W - 80) + 40;
+    const y = H - (((lat - minLat) / (maxLat - minLat)) * (H - 80) + 40);
+    return [Math.round(x), Math.round(y)];
+  };
+
+  let polylinesSvg = '';
+  let nodesSvg = '';
+  daysToShow.forEach(d => {
+    const pts = d.stops.map(s => project(s.lat, s.lng).join(',')).join(' ');
+    polylinesSvg += `<polyline points="${pts}" fill="none" stroke="${d.color}" stroke-width="3" stroke-dasharray="6,4" />`;
+    d.stops.forEach(s => {
+      const [x, y] = project(s.lat, s.lng);
+      nodesSvg += `
+        <g>
+          ${activeHighlightedStopId === s.id ? `<circle cx="${x}" cy="${y}" r="20" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="4,3" />` : ''}
+          <circle cx="${x}" cy="${y}" r="${activeHighlightedStopId === s.id ? 16 : (s.isTier1 ? 13 : 10)}" fill="${activeHighlightedStopId === s.id ? '#f59e0b' : d.color}" stroke="#ffffff" stroke-width="2" />
+          <text x="${x}" y="${y + 4}" fill="#ffffff" font-size="9.5" font-weight="800" text-anchor="middle">${s.num}</text>
+        </g>
+      `;
+    });
+  });
+
+  el.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;background:#0f172a;border-radius:8px;" aria-label="Vector Route Map">
+      ${polylinesSvg}
+      ${nodesSvg}
+    </svg>
+  `;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  // Detect initial language from ?lang=en|he or localStorage
+  let initLang = 'he';
+  let initSpeed = 1.0;
+  try {
+    const p = new URLSearchParams(window.location.search);
+    const qLang = (p.get('lang') || '').toLowerCase();
+    if (qLang === 'en' || qLang === 'he') {
+      initLang = qLang;
+    } else {
+      const savedLang = localStorage.getItem('eladb_rba_trip_lang');
+      if (savedLang === 'en' || savedLang === 'he') initLang = savedLang;
+    }
+    const qSpeed = parseFloat(p.get('speed') || localStorage.getItem('eladb_rba_trip_speed') || '1');
+    if (!isNaN(qSpeed) && qSpeed >= 0.5 && qSpeed <= 3.0) {
+      initSpeed = qSpeed;
+    }
+  } catch (e) {}
+  ['audio-player-short', 'audio-player-flight'].forEach(id => {
+    const p = document.getElementById(id);
+    if (p) {
+      p.addEventListener('play', () => {
+        // Pause the other player if both were started
+        const otherId = (id === 'audio-player-short') ? 'audio-player-flight' : 'audio-player-short';
+        const other = document.getElementById(otherId);
+        if (other && !other.paused) other.pause();
+        p.defaultPlaybackRate = currentAudioSpeed;
+        p.playbackRate = currentAudioSpeed;
+        syncAudioPlayerToStop(p, true);
+      });
+      p.addEventListener('timeupdate', () => {
+        if (!p.paused) syncAudioPlayerToStop(p, false);
+      });
+      p.addEventListener('seeked', () => {
+        syncAudioPlayerToStop(p, true);
+      });
+      p.addEventListener('loadedmetadata', () => {
+        p.defaultPlaybackRate = currentAudioSpeed;
+        p.playbackRate = currentAudioSpeed;
+      });
+    }
+  });
+  setLanguage(initLang);
+  setAudioSpeed(initSpeed);
+  initMap();
+});
+
+window.addEventListener('load', () => {
+  if (!map && typeof L !== 'undefined') {
+    switchMapDisplay('leaflet');
+  } else if (map) {
+    map.invalidateSize();
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.defaultPrevented) return;
+  const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+  if (tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable)) return;
+  if (!e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'l' || e.key === 'L' || e.key === 'ך')) {
+    e.preventDefault();
+    setLanguage(currentLang === 'en' ? 'he' : 'en');
+  }
+});
+</script>
+<!-- ELADB_UNIVERSAL_THEME_JS_START -->
+<script>
+(function() {
+  var STORAGE_KEY = 'eladb_x20_theme_v2';
+  function resolveInitialTheme() {
+    try {
+      var p = new URLSearchParams(window.location.search);
+      var t = (p.get('theme') || '').toLowerCase();
+      if (t === 'dark' || t === 'night') return 'dark';
+      if (t === 'light' || t === 'day') return 'light';
+    } catch (e) {}
+    try {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === 'dark' || saved === 'light') return saved;
+    } catch (e) {}
+    var existing = document.documentElement.getAttribute('data-theme');
+    if (existing === 'dark' || existing === 'light') return existing;
+    return 'dark';
+  }
+  function syncButtons(mode) {
+    var isDark = (mode === 'dark');
+    document.body.classList.toggle('night-mode', isDark);
+    var niceBtn = document.getElementById('btn-theme');
+    if (niceBtn) {
+      niceBtn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+      var isEn = document.documentElement.lang === 'en';
+      niceBtn.textContent = isEn
+        ? (isDark ? '☀️ Day Mode (D)' : '🌙 Night Mode (D)')
+        : (isDark ? '☀️ מצב יום (D)' : '🌙 מצב לילה (D)');
+    }
+  }
+  window.setTheme = function(mode) {
+    var next = (mode === 'dark' || mode === 'night') ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem(STORAGE_KEY, next); } catch (e) {}
+    syncButtons(next);
+  };
+  window.toggleTheme = function() {
+    var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    window.setTheme(cur === 'dark' ? 'light' : 'dark');
+  };
+  var initMode = resolveInitialTheme();
+  window.setTheme(initMode);
+  document.addEventListener('keydown', function(e) {
+    if (e.defaultPrevented) return;
+    var tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable)) return;
+    if (!e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'd' || e.key === 'D' || e.key === 'ג')) {
+      e.preventDefault();
+      window.toggleTheme();
+    }
+  });
+})();
+</script>
+<!-- ELADB_UNIVERSAL_THEME_JS_END -->
+</body>
+</html>

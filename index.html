@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>רבאט, סלא וקזבלנקה — מהדורת שטח לנייד</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #0f172a;
+    --muted: #475569;
+    --border: #cbd5e1;
+    --primary: #0284c7;
+    --card-bg: #f8fafc;
+    --accent: #d97706;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --primary: #38bdf8;
+      --card-bg: #1e293b;
+      --accent: #f59e0b;
+    }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 14px;
+    line-height: 1.6;
+  }
+  header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  h1 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .sub-header {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .global-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    min-height: 44px;
+  }
+  .btn-sec {
+    background: #334155;
+    color: #fff;
+  }
+  .btn-green {
+    background: #059669;
+    color: #fff;
+  }
+  .day-tabs {
+    display: flex;
+    gap: 6px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    flex: 1;
+    min-width: 75px;
+    padding: 10px 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--primary);
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+    min-height: 44px;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: #fff;
+  }
+  .tab-content {
+    display: none;
+    padding-top: 14px;
+  }
+  .tab-content.active {
+    display: block;
+  }
+  .day-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .day-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .day-subtitle {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .wa-box {
+    background: rgba(5, 150, 105, 0.1);
+    border: 1px dashed #059669;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+  .wa-title {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #059669;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .wa-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .wa-btn {
+    background: #059669;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 40px;
+  }
+  .wa-btn-sec {
+    background: transparent;
+    color: #059669;
+    border: 1px solid #059669;
+  }
+  .stop-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .stop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .stop-name {
+    font-size: 0.98rem;
+    font-weight: 800;
+  }
+  .stop-tier {
+    font-size: 0.72rem;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .tier-must {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .tier-sec {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+  .map-copy-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0,0,0,0.04);
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .map-name-text {
+    font-family: monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    direction: ltr;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .btn-copy-map {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 36px;
+  }
+  .info-row {
+    font-size: 0.82rem;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .info-label {
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .photo-tip {
+    background: rgba(147, 51, 234, 0.08);
+    border-inline-start: 3px solid #9333ea;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+  }
+  .transit-tip {
+    background: rgba(16, 185, 129, 0.08);
+    border-inline-start: 3px solid #10b981;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+  }
+  .stop-links {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .link-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    border-radius: 6px;
+    min-height: 36px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧭 רבאט, סלא וקזבלנקה — מהדורת שטח לנייד</h1>
+  <div class="sub-header">06/11 (נחיתה 10:30) עד 08/11 (המראה 14:05) | רבאט, סלא, מסגד חסן השני וקזבלנקה</div>
+  <div class="global-actions">
+    <button type="button" class="btn btn-green" onclick="copyAllDaysWhatsApp()">📱 העתק הכל לווטסאפ (Maps + תקציר)</button>
+    <a href="desktop.html" class="btn btn-sec">🗺️ תצוגת מפה מלאה (Desktop)</a>
+  </div>
+</header>
+
+<nav class="day-tabs" aria-label="ניווט לפי ימים">
+  <button type="button" class="tab-btn active" onclick="switchTab('1', this)">יום 1</button>
+  <button type="button" class="tab-btn " onclick="switchTab('2', this)">יום 2</button>
+  <button type="button" class="tab-btn " onclick="switchTab('3', this)">יום 3</button>
+</nav>
+
+<div class="tab-content active" id="tab-day-1">
+  <div class="day-card">
+    <div class="day-title">יום 1 (שישי 06/11, 10:30 - 21:30): נחיתה ב-RBA -> שדרת האר-דקו -> קסבת האודאיה -> סלא -> שקיעה במגדל חסן וזאהה חדיד</div>
+    <div class="day-subtitle">נחיתה ב-10:30 (FR162) -> אוטובוס אקספרס AE ל-Gare de Rabat Ville (11:30) -> ציר UNESCO של רבאט וסלא ברגל ובטראם</div>
+    <div class="wa-box">
+      <span class="wa-title">📲 העתקה לווטסאפ / פתקים — יום 1</span>
+      <div class="wa-btn-group">
+        <button type="button" class="wa-btn wa-btn-sec" onclick="copyDayWhatsApp('1', 1, this)">📋 רמה 1: שמות ל-Maps (רווח כפול)</button>
+        <button type="button" class="wa-btn" onclick="copyDayWhatsApp('1', 2, this)">📋 רמה 2: שם + זמנים + עלויות + תקציר</button>
+        <button type="button" class="wa-btn wa-btn-sec" onclick="copyDayWhatsApp('1', 3, this)">📋 רמה 3: מדריך שטח מלא</button>
+      </div>
+    </div>
+    <article class="stop-card" id="card-d1-s1">
+      <div class="stop-header">
+        <div class="stop-name">#1. שדרת Mohammed V, תחנת Rabat Ville וקתדרלת הבטון האקספרסיוניסטית St. Peter’s (1921)</div>
+        <span class="stop-tier tier-sec">● שלד</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Cathedrale Saint Pierre Rabat Morocco</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Cathedrale Saint Pierre Rabat Morocco', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 11:45 - 12:45 (60m) (60 דק׳) | 🔥 חובה - על ציר ההליכה הישיר מהאוטובוס אל המדינה</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> חינם (0 MAD)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> חוץ + הצצה של 10 דק׳ לפנים הגיאומטרי של הקתדרלה בכיכר Golan.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: שדרת דקלים קולוניאלית לבנה המשלבת קשתות מוגרביות עם בטון אר-דקו משנות ה-20, שבקצה שלה מתנשאים שני מגדלי הבטון הגיאומטריים של האדריכל Adrien Laforgue.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך מהשדה: האוטובוס מוריד אותך ב-Gare de Rabat Ville (שם תראה את גג הפלדה המודרני התלוי מעל המבנה ההיסטורי מ-1923).</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x ממרכז הכיכר העגולה (Place du Golan) כלפי צמד הצריחים המשולשים של הקתדרלה.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> 10 דק׳ הליכה צפונה דרך המדינה ורחוב הקונסולים (Rue des Consuls) אל קסבת האודאיה</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Cathedrale+Saint+Pierre+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+    <article class="stop-card" id="card-d1-s2">
+      <div class="stop-header">
+        <div class="stop-name">#2. Kasbah of the Udayas (שער Bab Oudaia האלמוהאדי, הסמטאות הכחולות, הגנים האנדלוסיים ותצפית הים)</div>
+        <span class="stop-tier tier-must">★ חובה</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Kasbah of the Udayas Rabat</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Kasbah of the Udayas Rabat', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 13:00 - 14:40 (100m) (100 דק׳) | 🔥 חובה מוחלטת - הפנינה ההיסטורית של רבאט</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> חינם לחלוטין (0 MAD לקסבה, לגנים האנדלוסיים ולמרפסת התצפית על האוקיינוס)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> חוץ (מצודה פתוחה וגנים): נכנסים מתחת לשער האבן המגולף Bab Oudaia (1195), הולכים בסמטאות הכחולות-לבנות עד מרפסת הסמפור מעל שפך הנהר והאוקיינוס, ויורדים לגנים האנדלוסיים.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: מבצר צוק מהמאה ה-12 הצבוע כולו בכחול אינדיגו ולבן בוהק, תלוי בדיוק בנקודה שבה נהר הבורגרג פוגש את גלי הענק של האוקיינוס האטלנטי.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך: צועדים לאורך Rue des Consuls (רחוב שבו גרו שגרירי אירופה במאה ה-18 תחת תקרת עץ קלועה).</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 1x ממרפסת ה-Semaphore שממסגרת את המגדלור, שוברי הגלים והעיר הלבנה של Salé מעבר לנהר.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> ירידה לנהר הבורגרג וחצייה בסירת משוטים מסורתית (2.5 MAD / 0.25€) או בטראם אל Salé</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Kasbah+of+the+Udayas+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+    <article class="stop-card" id="card-d1-s3">
+      <div class="stop-header">
+        <div class="stop-name">#3. Salé Medina & Medersa Abou El Hassan (מדרסת העץ והסטוקו המרינית מ-1341)</div>
+        <span class="stop-tier tier-sec">● שלד</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Medersa Abou El Hassan Sale Morocco</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Medersa Abou El Hassan Sale Morocco', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 15:00 - 16:10 (70m) (70 דק׳) | ⚡ פנינה נסתרת בלי תיירים בכלל - שווה מאוד</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> 20 MAD (~1.80€) כניסה למדרסה</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> פנים + גג (מוצדק ב-100% ב-1.80€): נכנסים לחצר הפסיפס ועולים במדרגות הצרות לתאי הסטודנטים בקומה השנייה ולגג.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: פנינה מרינית מ-1341 עם גילופי עץ ארז, תחרת סטוקו ופסיפס זליז׳ ברמת פירוט של אלהמברה, אך ריקה לחלוטין מתיירים.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך: חציית נהר הבורגרג בסירת עץ קטנה ממרינת האודאיה אל גדת Salé אורכת 3 דקות ונותנת זווית צילום נמוכה מהמים על מצוק הקסבה.</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x מחלון עץ הארז בקומה השנייה כלפי מטה על בריכת השיש בחצר הפנימית.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> נסיעה של 2 תחנות בטראם (קווים T1/T2 על גשר חסן ה-2, 6 MAD) אל תחנת Place du 16 Novembre / Tour Hassan</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Medersa+Abou+El+Hassan+Sale+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+    <article class="stop-card" id="card-d1-s4">
+      <div class="stop-header">
+        <div class="stop-name">#4. Hassan Tower & Mausoleum of Mohammed V + Grand Théâtre de Rabat של Zaha Hadid בשקיעה ובשעה הכחולה</div>
+        <span class="stop-tier tier-must">★ חובה</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Hassan Tower Rabat Morocco</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Hassan Tower Rabat Morocco', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 16:30 - 19:30 (שקיעה 18:22 + אורות לילה) (3 שעות (אור זהב + שקיעה + שעה כחולה)) | 🔥 חובה מוחלטת - הניגוד האדריכלי החזק ביותר בצפון אפריקה (1195 מול 2024)</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> חינם לחלוטין (0 MAD גם לרחבת מגדל חסן, גם למאוזוליאום וגם לטיילת זאהה חדיד)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> פנים + חוץ: הולכים בין 348 עמודי השיש של מגדל חסן, מציצים מהגלריה העליונה אל כיפת עלי הזהב המגולפת של המאוזוליאום, ויורדים ברגל (10 דק׳) לטיילת נהר הבורגרג צמוד לתיאטרון הפיסולי של זאהה חדיד בשעה הכחולה.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: באותו פריים עומדים צריח אבן החול האדום מהמאה ה-12 ו-348 עמודי השיש העתיקים, ומאחוריהם בעמק הנהר מתעקלות הקשתות העתידניות של זאהה חדיד ולצידן מגדל הזכוכית של מוחמד ה-6 בגובה 250 מטר המואר בלילה.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך: הירידה מרחבת מגדל חסן אל גשר חסן ה-2 וטיילת הנהר ממקמת אותך ממש למרגלות קונכיית הבטון הלבנה של זאהה חדיד.</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> זווית 1 (17:30): עדשה 1x נמוכה בין עמודי האבן השבורים של מגדל חסן. זווית 2 (18:35 שעה כחולה): עדשה 0.5x מטיילת הנהר שממסגרת את הקימורים של זאהה חדיד עם מגדל מוחמד ה-6 ברקע.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> טראם או 15 דק׳ הליכה חזרה למרכז רבאט</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Hassan+Tower+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+  </div>
+</div>
+<div class="tab-content " id="tab-day-2">
+  <div class="day-card">
+    <div class="day-title">יום 2 (שבת 07/11, 07:45 - 21:00): ספרינט רכבת מהירה לקזבלנקה (ללא תיק!) -> מסגד חסן ה-2 -> אר-דקו -> שקיעה ב-Chellah ברבאט</div>
+    <div class="day-subtitle">רכבת ONCF מ-Rabat Ville ל-Casa Port (07:50->08:45, ~45 MAD) -> סיור בוקר במסגד חסן ה-2 ובשדרות האר-דקו -> חזרה לרבאט ב-14:15 לשקיעה ב-Chellah</div>
+    <div class="wa-box">
+      <span class="wa-title">📲 העתקה לווטסאפ / פתקים — יום 2</span>
+      <div class="wa-btn-group">
+        <button type="button" class="wa-btn wa-btn-sec" onclick="copyDayWhatsApp('2', 1, this)">📋 רמה 1: שמות ל-Maps (רווח כפול)</button>
+        <button type="button" class="wa-btn" onclick="copyDayWhatsApp('2', 2, this)">📋 רמה 2: שם + זמנים + עלויות + תקציר</button>
+        <button type="button" class="wa-btn wa-btn-sec" onclick="copyDayWhatsApp('2', 3, this)">📋 רמה 3: מדריך שטח מלא</button>
+      </div>
+    </div>
+    <article class="stop-card" id="card-d2-s1">
+      <div class="stop-header">
+        <div class="stop-name">#5. Casablanca: Hassan II Mosque (הצריח בגובה 210m מעל גלי האוקיינוס + סיור פנים ב-09:00/10:00)</div>
+        <span class="stop-tier tier-must">★ חובה</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Hassan II Mosque Casablanca</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Hassan II Mosque Casablanca', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 09:00 - 11:00 (120m) (120 דק׳ (רחבת האוקיינוס החיצונית + 50 דק׳ סיור פנים ואולמות החמאם התת-קרקעיים)) | 🔥 חובה מוחלטת - המסגד היחיד במרוקו שפתוח ללא-מוסלמים והבניין המונומנטלי במדינה</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> 140 MAD (~13€, מקבלים אשראי) לכניסה פנימה; רחבת הענק מעל הים חינם (0 MAD)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> פנים + חוץ (מוצדק ב-100% ב-13€): זהו היוצא מן הכלל הגדול — היכל תפילה ל-25,000 איש עם גג טיטניום וארז שנפתח לשמיים וקומת מרתף של 41 מזרקות שיש בצורת פרחי לוטוס.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: מבנה עצום הבנוי על מצוק סלע מלאכותי בתוך האוקיינוס האטלנטי כשגלי הענק נשברים ישירות על קירות הפסיפס שלו, עם צריח בגובה 210 מטר (גבוה מפירמידת גיזה).</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך מתחנת הרכבת המודרנית Casa Port: מונית אדומה (Petit Taxi עם מונה, ~15 MAD / 1.40€, 7 דק׳) או 25 דק׳ הליכה לאורך החוף.</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x מקצה שובר הגלים המערבי שממסגרת את הצריח העצום (210m) יחד עם רסס גלי האוקיינוס.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> מונית קצרה (15 MAD, 8 דק׳) אל לב שדרות האר-דקו ו-Place Mohammed V</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Hassan+II+Mosque+Casablanca" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+    <article class="stop-card" id="card-d2-s2">
+      <div class="stop-header">
+        <div class="stop-name">#6. Casablanca Art Deco & Brutalist Spine: קתדרלת הבטון Sacré-Cœur (1930), Place Mohammed V ושדרת המודרניזם</div>
+        <span class="stop-tier tier-must">★ חובה</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Sacre Coeur Cathedral Casablanca</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Sacre Coeur Cathedral Casablanca', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 11:15 - 13:15 (120m) (120 דק׳ (מסלול הליכה ליניארי עד תחנת Casa Port)) | 🔥 חובה לחובבי אדריכלות - אוסף האר-דקו והברוטליזם הגדול באפריקה</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> חינם (0 MAD)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> חוץ בלבד: מסלול הליכה ליניארי מ-Parc de la Ligue Arabe וקתדרלת Sacré-Cœur, דרך Place Mohammed V (בית המשפט, הדואר והתיאטרון של Christian de Portzamparc) ועד בניין Immeuble Assayag ושדרת Mohammed V בדרך לתחנת הרכבת.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: קתדרלת Sacré-Cœur של Paul Tournon (1930) נראית כמו חללית גותית-מורית מיציקת בטון לבנה עם תומכות דואות גיאומטריות ומושרביות בטון.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך לתחנת הרכבת Casa Port (רכבת 13:20 או 13:50 לרבאט): עוברים בשדרת Mohammed V מתחת למרפסות המעוגלות של בנייני האר-דקו מ-1932.</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x מלמטה כלפי תומכות הבטון הלבנות של Sacré-Cœur מול השמיים הכחולים.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> רכבת ONCF מ-Casa Port (13:30) חזרה ל-Rabat Ville (14:25) -> מונית/הליכה ל-Chellah</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Sacre+Coeur+Cathedral+Casablanca" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+    <article class="stop-card" id="card-d2-s3">
+      <div class="stop-header">
+        <div class="stop-name">#7. Rabat: Chellah Necropolis (העיר הרומית Sala Colonia והנקרופוליס המריני מוקף החומה באור שקיעה)</div>
+        <span class="stop-tier tier-must">★ חובה</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Chellah Rabat Morocco</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Chellah Rabat Morocco', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 15:00 - 17:15 (135m — ⚠️ שעון חורף: שערי Chellah ננעלים ב-18:00 לפני השקיעה, כניסה אחרונה ב-17:15) (135 דק׳) | 🔥 חובה מוחלטת - האתר הארכיאולוגי-אדריכלי הדרמטי ביותר ברבאט (הגע עד 15:15 כי השער ננעל ב-18:00!)</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> 70 MAD (~6.50€)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> פנים + חוץ (מוצדק ב-100% — שים לב שבחורף המתחם נסגר ב-18:00!): נכנסים דרך השער המתומן המבוצר ויורדים בשבילי הגנים בין הפורום הרומי העתיק לבין המינרט המריני המעוטר בפסיפס שמעליו מקננות עשרות חסידות.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: שילוב סוריאליסטי של חומות אבן אדומות מהמאה ה-14, עמודים רומיים של הפרובינקיה מאוריטניה, בריכות מעיין עתיקות וצריח מריני מכוסה זליז׳ שעל ראשו קני חסידות ענקיים מול עמק הנהר.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך מתחנת Rabat Ville: עוברים לצד חומות הארמון המלכותי ורובע ה-Ministères.</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 2x מהטרסה העליונה שממסגרת את הקשתות הרומיות למטה יחד עם הצריח המריני וקן החסידות.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> 15 דק׳ הליכה חזרה לשדרת Mohammed V ולכיכר המוזיאון לאמנות מודרנית (MMVI)</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Chellah+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+    <article class="stop-card" id="card-d2-s4">
+      <div class="stop-header">
+        <div class="stop-name">#8. Rabat Blue Hour: רחבת הארקדות של מוזיאון Mohammed VI (MMVI), שער Bab Rouah והמדינה המוארת</div>
+        <span class="stop-tier tier-sec">● שלד</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Mohammed VI Museum of Modern and Contemporary Art Rabat</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Mohammed VI Museum of Modern and Contemporary Art Rabat', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 17:30 - 20:30 (שקיעה 18:22 + ערב ברבאט) (90 דק׳) | ⚡ על הדרך חזרה להוסטל - חזית מוארת מרשימה מאוד בלילה</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> חינם מבחוץ (0 MAD)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> חוץ בלבד (בלי להיכנס לתערוכת הציורים): צילום ארקדות הערבסקות הלבנות המוארות בלילה והליכה דרך שער האבן העצום Bab Er-Rouah (שער הרוחות מ-1197).</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: בלילה חזית הקשתות הכפולה של מוזיאון MMVI מוארת מבפנים כמו פנס תחרה גיאומטרי לבן, במרחק 300 מטר משער האבן המונומנטלי Bab Er-Rouah.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך: כל הציר מרושת במדרכות אבן רחבות ומוארות.</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 1x סימטרית מול הקשתות המוארות של MMVI בשעה הכחולה.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> הליכה קצרה ללינה ברבאט</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Mohammed+VI+Museum+of+Modern+and+Contemporary+Art+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+  </div>
+</div>
+<div class="tab-content " id="tab-day-3">
+  <div class="day-card">
+    <div class="day-title">יום 3 (ראשון 08/11, 08:45 - 11:45): שובר הגלים של שפך הבורגרג -> מצוק המגדלור האטלנטי -> שער Bab El Had -> טיסה 14:05</div>
+    <div class="day-subtitle">רצף חופי אחיד ונטול קפיצות פנים-עירוניות על מצוק האוקיינוס -> יציאה ב-11:30 באוטובוס AE מ-Gare de Rabat Ville לשדה התעופה RBA</div>
+    <div class="wa-box">
+      <span class="wa-title">📲 העתקה לווטסאפ / פתקים — יום 3</span>
+      <div class="wa-btn-group">
+        <button type="button" class="wa-btn wa-btn-sec" onclick="copyDayWhatsApp('3', 1, this)">📋 רמה 1: שמות ל-Maps (רווח כפול)</button>
+        <button type="button" class="wa-btn" onclick="copyDayWhatsApp('3', 2, this)">📋 רמה 2: שם + זמנים + עלויות + תקציר</button>
+        <button type="button" class="wa-btn wa-btn-sec" onclick="copyDayWhatsApp('3', 3, this)">📋 רמה 3: מדריך שטח מלא</button>
+      </div>
+    </div>
+    <article class="stop-card" id="card-d3-s1">
+      <div class="stop-header">
+        <div class="stop-name">#9. Jetée de Rabat & חומות הים התחתונות של קסבת האודאיה (שובר הגלים האטלנטי במפגש הנהר והאוקיינוס)</div>
+        <span class="stop-tier tier-sec">● שלד</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Jetee des Oudayas Rabat</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Jetee des Oudayas Rabat', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 08:45 - 09:45 (60m) (60 דק׳) | 🔥 פתיחת בוקר עוצמתית על קו המים שמחברת ברצף רגלי ישיר למגדלור (במקום נסיעה לפארק הבוטני המישורי)</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> [חוץ בלבד] חינם לחלוטין (0 MAD)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> [חוץ בלבד - 100% מצוק וגלים פתוחים]: הליכה על שובר הגלים הארוך היוצא לתוך האוקיינוס האטלנטי ממש מתחת לחומות האבן של קסבת האודאיה ומבצר Sqala.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: מבט ממפלס המים כלפי מעלה אל חומות המצודה האדירות מהמאה ה-12 כשאור הבוקר המזרחי מאיר את הקירות מעל גלי האוקיינוס המתנפצים.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך: ירידה ישירה מהמדינה אל סוללת התותחים Sqala ושובר הגלים.</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 1x משובר הגלים לאחור אל מצוק הקסבה והאוקיינוס.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> 5 דק׳ הליכה רציפה לאורך סלעי החוף דרומה אל מגדלור רבאט ומבצר Borj Sirat</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Jetee+des+Oudayas+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+    <article class="stop-card" id="card-d3-s2">
+      <div class="stop-header">
+        <div class="stop-name">#10. Phare de Rabat, בורג׳ א-סיראט ושוברי הגלים של האוקיינוס האטלנטי (Corniche de Rabat)</div>
+        <span class="stop-tier tier-must">★ חובה</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Rabat Lighthouse Phare de Rabat</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Rabat Lighthouse Phare de Rabat', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 09:50 - 10:50 (60m) (60 דק׳) | 🔥 חובה - עוצמת גלי האוקיינוס מתחת לחומות האבן</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> חינם (0 MAD)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> חוץ: הליכה לאורך טיילת הסלעים מהמגדלור הלבן (1920) ומבצר Borj Sirat אל חומות קסבת האודאיה.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: גלי אוקיינוס אטלנטיים עצומים מתנפצים לגובה של 5-8 מטרים של קצף לבן ישר מול מבצר האבן מהמאה ה-18 והמגדלור הלבן.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך חזרה למדינה ולאיסוף התיק מההוסטל (10:50-11:20): חוצים דרך החומה האנדלוסית ושוק Rue Souika.</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 2x שמקפיאה את התנפצות הגל על סלעי הבזלת עם חומות האודאיה והמגדלור ברקע.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> איסוף תיק הגב מההוסטל -> הליכה לתחנת האוטובוס מול Gare de Rabat Ville (11:30)</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Rabat+Lighthouse+Phare+de+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+    <article class="stop-card" id="card-d3-s3">
+      <div class="stop-header">
+        <div class="stop-name">#11. Bab El Had & החומה האנדלוסית של המדינה (בדרך ל-Gare de Rabat Ville)</div>
+        <span class="stop-tier tier-sec">● שלד</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Bab El Had Rabat Morocco</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Bab El Had Rabat Morocco', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 11:00 - 11:25 (25m) (25 דק׳) | ⚡ על הדרך הרגלית לתחנת האוטובוס לשדה</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> חינם (0 MAD)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> חוץ: מעבר מתחת לקשתות הפרסה המגולפות של שער Bab El Had מ-1197.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: שער מבוצר אדיר מאבן חול אדמדמה עם עיטורי צדפה גיאומטריים מתקופת תור הזהב האלמוהאדי.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> על הדרך: 6 דק׳ הליכה משם לתחנת האוטובוס ב-Gare de Rabat Ville.</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 1x לאורך קו הביצורים והמגדלים של החומה האנדלוסית.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> עלייה לאוטובוס ALSA AE ב-11:30 מ-Gare de Rabat Ville לשדה RBA</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Bab+El+Had+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+    <article class="stop-card" id="card-d3-s4">
+      <div class="stop-header">
+        <div class="stop-name">#12. טרמינל RBA החדש: החתמת דלפק Ryanair על הנייר המודפס (12:00) וטיסה FR163 לדבלין (14:05)</div>
+        <span class="stop-tier tier-sec">● שלד</span>
+      </div>
+      <div class="map-copy-bar">
+        <span class="map-name-text">Rabat Sale Airport RBA</span>
+        <button type="button" class="btn-copy-map" onclick="copySingleMap('Rabat Sale Airport RBA', this)">📋 העתק ל-Maps</button>
+      </div>
+      <div class="info-row"><span class="info-label">⏳ זמנים ומשך שהייה:</span> 12:00 - 14:05 (הגעה שעתיים לפני טיסה להחתמת הנייר וביקורת דרכונים) (25 דק׳ נסיעה מהמרכז) | 🔥 חובה לוגיסטית: לגשת קודם לדלפק Ryanair להחתמת כרטיס הנייר!</div>
+      <div class="info-row"><span class="info-label">🎟️ עלות והזמנה מראש:</span> 25 MAD (2.30€) באוטובוס AE (או 150 MAD במונית)</div>
+      <div class="info-row"><span class="info-label">🏛️ פנים מול חוץ:</span> פנים הטרמינל החדש: החתמת הנייר בדלפק צ׳ק-אין -> בידוק ביטחוני -> החתמת יציאה בדרכון הפורטוגלי.</div>
+      <div class="info-row"><span class="info-label">🔍 מה רואים ולמה זה וואו:</span> למה זה וואו: הטרמינל החדש של רבאט משלב מעטפת זכוכית וגג גיאומטרי בהשראת מושרביות מסורתיות, והוא קומפקטי ויעיל הרבה יותר ממרקש.</div>
+      <div class="info-row"><span class="info-label">🗺️ על הדרך:</span> אם נשאר לך מזומן בדירהם (MAD), החלף או קנה מים/קפה לפני העלייה למטוס (דירהם הוא מטבע סגור).</div>
+      <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x באולם הנוסעים מתחת לתקרת המשולשים הגיאומטרית.</div>
+      <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> טיסה ישירה FR163 לדבלין (14:05 -> 17:30)</div>
+      <div class="stop-links">
+        <a href="https://www.google.com/maps/search/?api=1&query=Rabat+Sale+Airport+RBA" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+      </div>
+    </article>
+  </div>
+</div>
+
+<script>
+const ITINERARY_DATA = {"days": [{"day": "1", "title": "יום 1 (שישי 06/11, 10:30 - 21:30): נחיתה ב-RBA -> שדרת האר-דקו -> קסבת האודאיה -> סלא -> שקיעה במגדל חסן וזאהה חדיד", "title_en": "Day 1 (Fri 06/11, 10:30 - 21:30): Land at RBA -> Art Deco Spine -> Kasbah of the Udayas -> Salé -> Sunset at Hassan Tower & Zaha Hadid", "subtitle": "נחיתה ב-10:30 (FR162) -> אוטובוס אקספרס AE ל-Gare de Rabat Ville (11:30) -> ציר UNESCO של רבאט וסלא ברגל ובטראם", "subtitle_en": "Land 10:30 (FR162) -> ALSA Express Bus AE to Rabat Ville (11:30) -> UNESCO Rabat & Salé Spine on foot & tram", "color": "#059669", "stops": [{"id": "d1-s1", "num": 1, "isTier1": false, "tier": "Tier 2 Spine | 17/20 (A:4 B:4 C:5 D:4)", "name": "שדרת Mohammed V, תחנת Rabat Ville וקתדרלת הבטון האקספרסיוניסטית St. Peter’s (1921)", "name_en": "Avenue Mohammed V Art Deco Spine & St. Peter’s Concrete Expressionist Cathedral (1921)", "map_name": "Cathedrale Saint Pierre Rabat Morocco", "lat": 34.0177, "lng": -6.8315, "time": "11:45 - 12:45 (60m)", "time_en": "11:45 - 12:45 (60m)", "cost_he": "חינם (0 MAD)", "cost_en": "Free (0 MAD)", "dur_he": "60 דק׳", "dur_en": "60 mins", "skip_he": "🔥 חובה - על ציר ההליכה הישיר מהאוטובוס אל המדינה", "skip_en": "🔥 MUST-SEE - Directly on the walking spine from the station to the Medina", "isMust": true, "in_he": "חוץ + הצצה של 10 דק׳ לפנים הגיאומטרי של הקתדרלה בכיכר Golan.", "in_en": "Outside + 10-min peek inside St. Peter’s geometric concrete nave on Place du Golan.", "wow_he": "למה זה וואו: שדרת דקלים קולוניאלית לבנה המשלבת קשתות מוגרביות עם בטון אר-דקו משנות ה-20, שבקצה שלה מתנשאים שני מגדלי הבטון הגיאומטריים של האדריכל Adrien Laforgue.", "wow_en": "Why It Is WOW: A monumental palm-lined 1920s Neo-Moorish Art Deco boulevard culminating in Adrien Laforgue’s striking white geometric concrete cathedral towers.", "enroute_he": "על הדרך מהשדה: האוטובוס מוריד אותך ב-Gare de Rabat Ville (שם תראה את גג הפלדה המודרני התלוי מעל המבנה ההיסטורי מ-1923).", "enroute_en": "En-Route from RBA: The airport bus drops you right at Gare de Rabat Ville, where a sweeping modern steel canopy floats over the 1923 Neo-Moorish station.", "wx_he": "☀️ 23°C שמשי ונעים: שדרה מישורית רחבה.", "wx_en": "☀️ 23°C sunny: Wide, flat pedestrian median.", "photo_tip": "עדשה 0.5x ממרכז הכיכר העגולה (Place du Golan) כלפי צמד הצריחים המשולשים של הקתדרלה.", "photo_tip_en": "0.5x ultra-wide from the center of Place du Golan looking up at the twin geometric concrete spires.", "move": "10 דק׳ הליכה צפונה דרך המדינה ורחוב הקונסולים (Rue des Consuls) אל קסבת האודאיה", "move_en": "10m walk north through Rue des Consuls in the Medina to the Kasbah of the Udayas"}, {"id": "d1-s2", "num": 2, "isTier1": true, "tier": "Tier 1 Anchor | 20/20 (A:5 B:5 C:5 D:5)", "name": "Kasbah of the Udayas (שער Bab Oudaia האלמוהאדי, הסמטאות הכחולות, הגנים האנדלוסיים ותצפית הים)", "name_en": "Kasbah of the Udayas (12th-C. Bab Oudaia Gate, Blue Streets, Andalusian Gardens & Ocean Platform)", "map_name": "Kasbah of the Udayas Rabat", "lat": 34.0319, "lng": -6.8361, "time": "13:00 - 14:40 (100m)", "time_en": "13:00 - 14:40 (100m)", "cost_he": "חינם לחלוטין (0 MAD לקסבה, לגנים האנדלוסיים ולמרפסת התצפית על האוקיינוס)", "cost_en": "100% Free (0 MAD for the Kasbah, Andalusian Gardens & Atlantic Semaphore platform)", "dur_he": "100 דק׳", "dur_en": "100 mins", "skip_he": "🔥 חובה מוחלטת - הפנינה ההיסטורית של רבאט", "skip_en": "🔥 ABSOLUTE MUST-SEE - The historic crown jewel of Rabat", "isMust": true, "in_he": "חוץ (מצודה פתוחה וגנים): נכנסים מתחת לשער האבן המגולף Bab Oudaia (1195), הולכים בסמטאות הכחולות-לבנות עד מרפסת הסמפור מעל שפך הנהר והאוקיינוס, ויורדים לגנים האנדלוסיים.", "in_en": "Outside Open Fortress & Gardens: Enter through the monumental 1195 carved Bab Oudaia gate, walk the indigo-and-white alleys to the ocean cliff platform, and loop through the sunken Andalusian Gardens.", "wow_he": "למה זה וואו: מבצר צוק מהמאה ה-12 הצבוע כולו בכחול אינדיגו ולבן בוהק, תלוי בדיוק בנקודה שבה נהר הבורגרג פוגש את גלי הענק של האוקיינוס האטלנטי.", "wow_en": "Why It Is WOW: A 12th-century Almohad cliff citadel painted in vivid indigo and whitewash, perched directly above the crashing Atlantic surf and Bouregreg river mouth.", "enroute_he": "על הדרך: צועדים לאורך Rue des Consuls (רחוב שבו גרו שגרירי אירופה במאה ה-18 תחת תקרת עץ קלועה).", "enroute_en": "En-Route: Walk up Rue des Consuls under woven reed sun-canopies where foreign ambassadors lived in the 18th century.", "wx_he": "☀️ 23°C עם בריזת אוקיינוס רעננה במרפסת התצפית.", "wx_en": "☀️ 23°C with a crisp Atlantic breeze on the Semaphore terrace.", "photo_tip": "עדשה 1x ממרפסת ה-Semaphore שממסגרת את המגדלור, שוברי הגלים והעיר הלבנה של Salé מעבר לנהר.", "photo_tip_en": "1x lens from the Semaphore platform framing the crashing Atlantic waves, Bouregreg river mouth, and white Salé across the water.", "move": "ירידה לנהר הבורגרג וחצייה בסירת משוטים מסורתית (2.5 MAD / 0.25€) או בטראם אל Salé", "move_en": "Walk down to the Bouregreg jetty and cross by rowboat (2.5 MAD) or Tramway to Salé"}, {"id": "d1-s3", "num": 3, "isTier1": false, "tier": "Tier 2 Spine | 18/20 (A:5 B:5 C:4 D:4)", "name": "Salé Medina & Medersa Abou El Hassan (מדרסת העץ והסטוקו המרינית מ-1341)", "name_en": "Salé Medina & Medersa Abou El Hassan (1341 Marinid Carved Cedar & Zellij Courtyard)", "map_name": "Medersa Abou El Hassan Sale Morocco", "lat": 34.0392, "lng": -6.8225, "time": "15:00 - 16:10 (70m)", "time_en": "15:00 - 16:10 (70m)", "cost_he": "20 MAD (~1.80€) כניסה למדרסה", "cost_en": "20 MAD (~€1.80) Medersa ticket", "dur_he": "70 דק׳", "dur_en": "70 mins", "skip_he": "⚡ פנינה נסתרת בלי תיירים בכלל - שווה מאוד", "skip_en": "⚡ Zero-tourist Marinid architectural gem", "isMust": false, "in_he": "פנים + גג (מוצדק ב-100% ב-1.80€): נכנסים לחצר הפסיפס ועולים במדרגות הצרות לתאי הסטודנטים בקומה השנייה ולגג.", "in_en": "Inside Courtyard + Rooftop (100% Worth €1.80): Enter the carved courtyard and climb the narrow stairs to the upper student cells and roof terrace.", "wow_he": "למה זה וואו: פנינה מרינית מ-1341 עם גילופי עץ ארז, תחרת סטוקו ופסיפס זליז׳ ברמת פירוט של אלהמברה, אך ריקה לחלוטין מתיירים.", "wow_en": "Why It Is WOW: An intimate 1341 Marinid Quranic college showcasing lace-like stucco, carved Atlas cedar, and zellij tilework with zero crowds.", "enroute_he": "על הדרך: חציית נהר הבורגרג בסירת עץ קטנה ממרינת האודאיה אל גדת Salé אורכת 3 דקות ונותנת זווית צילום נמוכה מהמים על מצוק הקסבה.", "enroute_en": "En-Route: Crossing the Bouregreg river in a wooden skiff gives a water-level view looking straight up at the Udayas cliff walls.", "wx_he": "☀️ 23°C: חצר פנימית מוצלת וקרירה.", "wx_en": "☀️ 23°C: Shaded interior courtyard.", "photo_tip": "עדשה 0.5x מחלון עץ הארז בקומה השנייה כלפי מטה על בריכת השיש בחצר הפנימית.", "photo_tip_en": "0.5x ultra-wide from the second-floor cedar gallery looking down into the symmetrical marble courtyard.", "move": "נסיעה של 2 תחנות בטראם (קווים T1/T2 על גשר חסן ה-2, 6 MAD) אל תחנת Place du 16 Novembre / Tour Hassan", "move_en": "2 stops on the Rabat-Salé Tramway (6 MAD across Hassan II Bridge) to Tour Hassan"}, {"id": "d1-s4", "num": 4, "isTier1": true, "tier": "Tier 1 Anchor | 20/20 (A:5 B:5 C:5 D:5)", "name": "Hassan Tower & Mausoleum of Mohammed V + Grand Théâtre de Rabat של Zaha Hadid בשקיעה ובשעה הכחולה", "name_en": "Hassan Tower (348 Columns) & Zaha Hadid’s Grand Théâtre de Rabat at Sunset & Blue Hour", "map_name": "Hassan Tower Rabat Morocco", "lat": 34.0242, "lng": -6.8227, "time": "16:30 - 19:30 (שקיעה 18:22 + אורות לילה)", "time_en": "16:30 - 19:30 (Sunset at 18:22 + Blue Hour illumination)", "cost_he": "חינם לחלוטין (0 MAD גם לרחבת מגדל חסן, גם למאוזוליאום וגם לטיילת זאהה חדיד)", "cost_en": "100% Free (0 MAD for Hassan Tower plaza, Mausoleum & Zaha Hadid riverfront)", "dur_he": "3 שעות (אור זהב + שקיעה + שעה כחולה)", "dur_en": "3 hours (Golden Hour + Sunset + Blue Hour)", "skip_he": "🔥 חובה מוחלטת - הניגוד האדריכלי החזק ביותר בצפון אפריקה (1195 מול 2024)", "skip_en": "🔥 ABSOLUTE MUST-SEE - North Africa’s greatest architectural contrast (1195 vs. 2024)", "isMust": true, "in_he": "פנים + חוץ: הולכים בין 348 עמודי השיש של מגדל חסן, מציצים מהגלריה העליונה אל כיפת עלי הזהב המגולפת של המאוזוליאום, ויורדים ברגל (10 דק׳) לטיילת נהר הבורגרג צמוד לתיאטרון הפיסולי של זאהה חדיד בשעה הכחולה.", "in_en": "Inside Mausoleum Gallery + Outside Plaza & Riverfront: Walk the forest of 348 stone columns at Hassan Tower, view the gilded mahogany dome inside the Mausoleum, then walk 10 mins down to Zaha Hadid’s fluid white concrete Grand Theatre at Blue Hour.", "wow_he": "למה זה וואו: באותו פריים עומדים צריח אבן החול האדום מהמאה ה-12 ו-348 עמודי השיש העתיקים, ומאחוריהם בעמק הנהר מתעקלות הקשתות העתידניות של זאהה חדיד ולצידן מגדל הזכוכית של מוחמד ה-6 בגובה 250 מטר המואר בלילה.", "wow_en": "Why It Is WOW: In a single visual sweep, the 12th-century red sandstone Hassan Tower and 348 ruined pillars overlook Zaha Hadid’s futuristic fluid-concrete Grand Theatre and the 250m illuminated Mohammed VI supertall tower.", "enroute_he": "על הדרך: הירידה מרחבת מגדל חסן אל גשר חסן ה-2 וטיילת הנהר ממקמת אותך ממש למרגלות קונכיית הבטון הלבנה של זאהה חדיד.", "enroute_en": "En-Route: Walking down from the Hassan Tower esplanade to the riverfront boulevard places you right alongside Zaha Hadid’s sweeping white sculptural curves.", "wx_he": "🌅 19°C בשקיעה (18:22): אבן החול האדומה של מגדל חסן בוערת בכתום ואז התיאטרון של זאהה חדיד נדלק בלבן.", "wx_en": "🌅 19°C at 18:22 sunset: The red sandstone tower glows amber before Zaha Hadid’s white concrete shell lights up at dusk.", "photo_tip": "זווית 1 (17:30): עדשה 1x נמוכה בין עמודי האבן השבורים של מגדל חסן. זווית 2 (18:35 שעה כחולה): עדשה 0.5x מטיילת הנהר שממסגרת את הקימורים של זאהה חדיד עם מגדל מוחמד ה-6 ברקע.", "photo_tip_en": "Angle 1 (17:30): Low-angle 1x through the stone column grid toward Hassan Tower. Angle 2 (18:35 Blue Hour): 0.5x from the river promenade framing Zaha Hadid’s curves against the 250m tower.", "move": "טראם או 15 דק׳ הליכה חזרה למרכז רבאט", "move_en": "Tram or 15m walk back to central Rabat"}]}, {"day": "2", "title": "יום 2 (שבת 07/11, 07:45 - 21:00): ספרינט רכבת מהירה לקזבלנקה (ללא תיק!) -> מסגד חסן ה-2 -> אר-דקו -> שקיעה ב-Chellah ברבאט", "title_en": "Day 2 (Sat 07/11, 07:45 - 21:00): Pocket-Only Rail Sprint to Casablanca -> Hassan II Mosque -> Art Deco -> Rabat Chellah Sunset", "subtitle": "רכבת ONCF מ-Rabat Ville ל-Casa Port (07:50->08:45, ~45 MAD) -> סיור בוקר במסגד חסן ה-2 ובשדרות האר-דקו -> חזרה לרבאט ב-14:15 לשקיעה ב-Chellah", "subtitle_en": "ONCF train Rabat Ville to Casa Port (07:50->08:45, ~45 MAD) -> Hassan II Mosque & Art Deco Spine -> Return to Rabat by 14:15 for Chellah Sunset", "color": "#d97706", "stops": [{"id": "d2-s1", "num": 5, "isTier1": true, "tier": "Tier 1 Anchor | 20/20 (A:5 B:5 C:5 D:5)", "name": "Casablanca: Hassan II Mosque (הצריח בגובה 210m מעל גלי האוקיינוס + סיור פנים ב-09:00/10:00)", "name_en": "Casablanca: Hassan II Mosque (210m Oceanfront Minaret + Guided Interior & Hammam Tour)", "map_name": "Hassan II Mosque Casablanca", "lat": 33.6084, "lng": -7.6327, "time": "09:00 - 11:00 (120m)", "time_en": "09:00 - 11:00 (120m)", "cost_he": "140 MAD (~13€, מקבלים אשראי) לכניסה פנימה; רחבת הענק מעל הים חינם (0 MAD)", "cost_en": "140 MAD (~€13, card accepted) for interior guided tour; vast ocean esplanade is Free (0 MAD)", "dur_he": "120 דק׳ (רחבת האוקיינוס החיצונית + 50 דק׳ סיור פנים ואולמות החמאם התת-קרקעיים)", "dur_en": "120 mins (vast Atlantic sea walls + 50m interior hall & underground ablution lotus halls)", "skip_he": "🔥 חובה מוחלטת - המסגד היחיד במרוקו שפתוח ללא-מוסלמים והבניין המונומנטלי במדינה", "skip_en": "🔥 ABSOLUTE MUST-SEE - The only monumental mosque in Morocco open to non-Muslims", "isMust": true, "in_he": "פנים + חוץ (מוצדק ב-100% ב-13€): זהו היוצא מן הכלל הגדול — היכל תפילה ל-25,000 איש עם גג טיטניום וארז שנפתח לשמיים וקומת מרתף של 41 מזרקות שיש בצורת פרחי לוטוס.", "in_en": "Inside + Outside (100% Worth €13): Enter the colossal 25,000-person prayer hall with its retractable cedar-and-titanium roof and descend to the 41 marble lotus fountains.", "wow_he": "למה זה וואו: מבנה עצום הבנוי על מצוק סלע מלאכותי בתוך האוקיינוס האטלנטי כשגלי הענק נשברים ישירות על קירות הפסיפס שלו, עם צריח בגובה 210 מטר (גבוה מפירמידת גיזה).", "wow_en": "Why It Is WOW: Built on a rocky outcrop reclaimed from the Atlantic Ocean where giant rollers crash directly against the seawalls below a 210m minaret.", "enroute_he": "על הדרך מתחנת הרכבת המודרנית Casa Port: מונית אדומה (Petit Taxi עם מונה, ~15 MAD / 1.40€, 7 דק׳) או 25 דק׳ הליכה לאורך החוף.", "enroute_en": "En-Route from Casa Port rail station: 7-min red Petit Taxi (15 MAD / €1.40 on the meter) directly to the ocean esplanade.", "wx_he": "☀️ 22°C: רוח אוקיינוס מרעננת ברחבה החיצונית.", "wx_en": "☀️ 22°C: Dramatic ocean spray along the western seawall.", "photo_tip": "עדשה 0.5x מקצה שובר הגלים המערבי שממסגרת את הצריח העצום (210m) יחד עם רסס גלי האוקיינוס.", "photo_tip_en": "0.5x ultra-wide from the western seawall promenade framing the 210m minaret rising out of the Atlantic spray.", "move": "מונית קצרה (15 MAD, 8 דק׳) אל לב שדרות האר-דקו ו-Place Mohammed V", "move_en": "8m Petit Taxi (15 MAD) to Sacré-Cœur & Place Mohammed V Art Deco center"}, {"id": "d2-s2", "num": 6, "isTier1": true, "tier": "Tier 1 Anchor | 18/20 (A:5 B:5 C:4 D:4)", "name": "Casablanca Art Deco & Brutalist Spine: קתדרלת הבטון Sacré-Cœur (1930), Place Mohammed V ושדרת המודרניזם", "name_en": "Casablanca Art Deco & Concrete Spine: Sacré-Cœur Cathedral (1930), Place Mohammed V & Boulevard Mohammed V", "map_name": "Sacre Coeur Cathedral Casablanca", "lat": 33.5912, "lng": -7.6246, "time": "11:15 - 13:15 (120m)", "time_en": "11:15 - 13:15 (120m)", "cost_he": "חינם (0 MAD)", "cost_en": "Free (0 MAD)", "dur_he": "120 דק׳ (מסלול הליכה ליניארי עד תחנת Casa Port)", "dur_en": "120 mins (linear architectural walk back to Casa Port station)", "skip_he": "🔥 חובה לחובבי אדריכלות - אוסף האר-דקו והברוטליזם הגדול באפריקה", "skip_en": "🔥 MUST-SEE for Architecture Lovers - Africa’s premier Art Deco & Brutalist open-air museum", "isMust": true, "in_he": "חוץ בלבד: מסלול הליכה ליניארי מ-Parc de la Ligue Arabe וקתדרלת Sacré-Cœur, דרך Place Mohammed V (בית המשפט, הדואר והתיאטרון של Christian de Portzamparc) ועד בניין Immeuble Assayag ושדרת Mohammed V בדרך לתחנת הרכבת.", "in_en": "Outside Linear Walk: Walk from Sacré-Cœur Cathedral through Place Mohammed V (Neo-Moorish Courthouse + Portzamparc’s sculptural Grand Théâtre) down Boulevard Mohammed V’s Art Deco facades back to Casa Port.", "wow_he": "למה זה וואו: קתדרלת Sacré-Cœur של Paul Tournon (1930) נראית כמו חללית גותית-מורית מיציקת בטון לבנה עם תומכות דואות גיאומטריות ומושרביות בטון.", "wow_en": "Why It Is WOW: Paul Tournon’s 1930 Sacré-Cœur Cathedral fuses Gothic flying buttresses with Moroccan minaret proportions and geometric concrete mashrabiya grids.", "enroute_he": "על הדרך לתחנת הרכבת Casa Port (רכבת 13:20 או 13:50 לרבאט): עוברים בשדרת Mohammed V מתחת למרפסות המעוגלות של בנייני האר-דקו מ-1932.", "enroute_en": "En-Route to Casa Port station (13:20/13:50 train to Rabat): Stroll under the curved aerodynamic balconies and zellij-trimmed Art Deco apartment blocks of Boulevard Mohammed V.", "wx_he": "☀️ 24°C: שדרות רחבות עם צל דקלים.", "wx_en": "☀️ 24°C: Palm-shaded boulevards.", "photo_tip": "עדשה 0.5x מלמטה כלפי תומכות הבטון הלבנות של Sacré-Cœur מול השמיים הכחולים.", "photo_tip_en": "0.5x low-angle looking straight up the geometric white concrete buttresses of Sacré-Cœur.", "move": "רכבת ONCF מ-Casa Port (13:30) חזרה ל-Rabat Ville (14:25) -> מונית/הליכה ל-Chellah", "move_en": "ONCF train from Casa Port (13:30) back to Rabat Ville (14:25) -> 5m taxi or 15m walk to Chellah"}, {"id": "d2-s3", "num": 7, "isTier1": true, "tier": "Tier 1 Anchor | 20/20 (A:5 B:5 C:5 D:5)", "name": "Rabat: Chellah Necropolis (העיר הרומית Sala Colonia והנקרופוליס המריני מוקף החומה באור שקיעה)", "name_en": "Rabat: Chellah Fortified Necropolis (Roman Sala Colonia & 14th-C. Merinid Ruins at Golden Hour)", "map_name": "Chellah Rabat Morocco", "lat": 34.0071, "lng": -6.8206, "time": "15:00 - 17:15 (135m — ⚠️ שעון חורף: שערי Chellah ננעלים ב-18:00 לפני השקיעה, כניסה אחרונה ב-17:15)", "time_en": "15:00 - 17:15 (135m — ⚠️ Winter Hours: Chellah gates lock at 18:00 before sunset, last entry 17:15)", "cost_he": "70 MAD (~6.50€)", "cost_en": "70 MAD (~€6.50)", "dur_he": "135 דק׳", "dur_en": "135 mins", "skip_he": "🔥 חובה מוחלטת - האתר הארכיאולוגי-אדריכלי הדרמטי ביותר ברבאט (הגע עד 15:15 כי השער ננעל ב-18:00!)", "skip_en": "🔥 ABSOLUTE MUST-SEE - Most atmospheric fortified ruin in Morocco (arrive by 15:15 before 18:00 gate lock!)", "isMust": true, "in_he": "פנים + חוץ (מוצדק ב-100% — שים לב שבחורף המתחם נסגר ב-18:00!): נכנסים דרך השער המתומן המבוצר ויורדים בשבילי הגנים בין הפורום הרומי העתיק לבין המינרט המריני המעוטר בפסיפס שמעליו מקננות עשרות חסידות.", "in_en": "Inside Walled Complex (100% Worth €6.50 — Note 18:00 winter closing!): Enter through the fortified octagonal gate and descend past the Roman triumphal arch into the 14th-century Islamic sanctuary crowned with stork nests.", "wow_he": "למה זה וואו: שילוב סוריאליסטי של חומות אבן אדומות מהמאה ה-14, עמודים רומיים של הפרובינקיה מאוריטניה, בריכות מעיין עתיקות וצריח מריני מכוסה זליז׳ שעל ראשו קני חסידות ענקיים מול עמק הנהר.", "wow_en": "Why It Is WOW: A walled 14th-century red-earth fortress enclosing both ancient Roman columns and a zellij-tiled Islamic minaret topped by giant stork nests overlooking the Bouregreg valley.", "enroute_he": "על הדרך מתחנת Rabat Ville: עוברים לצד חומות הארמון המלכותי ורובע ה-Ministères.", "enroute_en": "En-Route from Rabat Ville: Pass the monumental ochre ramparts near Bab Zaër.", "wx_he": "🌅 22°C באור זהב (16:00-17:30): קרני השמש האלכסוניות מאירות את אבן החול הכתומה.", "wx_en": "🌅 22°C Golden Hour: Low afternoon sun sets the ochre battlements and palm gardens ablaze.", "photo_tip": "עדשה 2x מהטרסה העליונה שממסגרת את הקשתות הרומיות למטה יחד עם הצריח המריני וקן החסידות.", "photo_tip_en": "2x telephoto from the upper terrace compressing the Roman columns, Marinid minaret, and stork nests in one frame.", "move": "15 דק׳ הליכה חזרה לשדרת Mohammed V ולכיכר המוזיאון לאמנות מודרנית (MMVI)", "move_en": "15m walk back to Avenue Mohammed V & MMVI Museum Plaza"}, {"id": "d2-s4", "num": 8, "isTier1": false, "tier": "Tier 2 Spine | 17/20 (A:4 B:4 C:5 D:4)", "name": "Rabat Blue Hour: רחבת הארקדות של מוזיאון Mohammed VI (MMVI), שער Bab Rouah והמדינה המוארת", "name_en": "Rabat Blue Hour: MMVI Neo-Moorish Arcade Plaza, Bab Er-Rouah Monumental Gate & Night Medina", "map_name": "Mohammed VI Museum of Modern and Contemporary Art Rabat", "lat": 34.0149, "lng": -6.8326, "time": "17:30 - 20:30 (שקיעה 18:22 + ערב ברבאט)", "time_en": "17:30 - 20:30 (Sunset 18:22 + Night stroll)", "cost_he": "חינם מבחוץ (0 MAD)", "cost_en": "Free exterior (0 MAD)", "dur_he": "90 דק׳", "dur_en": "90 mins", "skip_he": "⚡ על הדרך חזרה להוסטל - חזית מוארת מרשימה מאוד בלילה", "skip_en": "⚡ Directly on your evening walk back to the hostel", "isMust": false, "in_he": "חוץ בלבד (בלי להיכנס לתערוכת הציורים): צילום ארקדות הערבסקות הלבנות המוארות בלילה והליכה דרך שער האבן העצום Bab Er-Rouah (שער הרוחות מ-1197).", "in_en": "Outside Only (Skip indoor painting galleries): Admire the illuminated geometric double-arcade exterior of MMVI and walk through the 1197 Almohad gate of Bab Er-Rouah.", "wow_he": "למה זה וואו: בלילה חזית הקשתות הכפולה של מוזיאון MMVI מוארת מבפנים כמו פנס תחרה גיאומטרי לבן, במרחק 300 מטר משער האבן המונומנטלי Bab Er-Rouah.", "wow_en": "Why It Is WOW: At dusk the white geometric brise-soleil colonnade of the MMVI Museum glows like a carved lantern just steps from the 1197 Almohad bastion of Bab Er-Rouah.", "enroute_he": "על הדרך: כל הציר מרושת במדרכות אבן רחבות ומוארות.", "enroute_en": "En-Route: Wide, well-lit pedestrian avenues connect Bab Er-Rouah straight up to the Medina walls.", "wx_he": "🌙 17°C נעים בערב.", "wx_en": "🌙 17°C mild evening.", "photo_tip": "עדשה 1x סימטרית מול הקשתות המוארות של MMVI בשעה הכחולה.", "photo_tip_en": "Symmetrical 1x shot facing the glowing white arches of MMVI at Blue Hour.", "move": "הליכה קצרה ללינה ברבאט", "move_en": "Short walk back to Rabat accommodation"}]}, {"day": "3", "title": "יום 3 (ראשון 08/11, 08:45 - 11:45): שובר הגלים של שפך הבורגרג -> מצוק המגדלור האטלנטי -> שער Bab El Had -> טיסה 14:05", "title_en": "Day 3 (Sun 08/11, 08:45 - 11:45): Bouregreg Jetty & Sea Bastions -> Atlantic Lighthouse Cliff -> Bab El Had -> 14:05 Flight", "subtitle": "רצף חופי אחיד ונטול קפיצות פנים-עירוניות על מצוק האוקיינוס -> יציאה ב-11:30 באוטובוס AE מ-Gare de Rabat Ville לשדה התעופה RBA", "subtitle_en": "Continuous coastal cliff walk (zero inland park detours) -> 11:30 ALSA Express Bus AE from Rabat Ville to RBA Airport", "color": "#0284c7", "stops": [{"id": "d3-s1", "num": 9, "isTier1": false, "tier": "Tier 2 Spine | 18/20 (G:4 E:5 V:4 T:3 L:2)", "name": "Jetée de Rabat & חומות הים התחתונות של קסבת האודאיה (שובר הגלים האטלנטי במפגש הנהר והאוקיינוס)", "name_en": "Jetée de Rabat & Lower Sea Bastions of the Udayas (Atlantic Breakwater Pier at River Mouth)", "map_name": "Jetee des Oudayas Rabat", "lat": 34.0345, "lng": -6.8385, "time": "08:45 - 09:45 (60m)", "time_en": "08:45 - 09:45 (60m)", "cost_he": "[חוץ בלבד] חינם לחלוטין (0 MAD)", "cost_en": "[Outside Only] 100% Free (0 MAD)", "dur_he": "60 דק׳", "dur_en": "60 mins", "skip_he": "🔥 פתיחת בוקר עוצמתית על קו המים שמחברת ברצף רגלי ישיר למגדלור (במקום נסיעה לפארק הבוטני המישורי)", "skip_en": "🔥 Dramatic ocean-level start connecting directly on foot to the Lighthouse coastal spine", "isMust": true, "in_he": "[חוץ בלבד - 100% מצוק וגלים פתוחים]: הליכה על שובר הגלים הארוך היוצא לתוך האוקיינוס האטלנטי ממש מתחת לחומות האבן של קסבת האודאיה ומבצר Sqala.", "in_en": "[Outside Only - 100% Open Ocean & Bastions]: Walk out along the stone breakwater pier projecting into the Atlantic directly beneath the Udayas cliff walls and Sqala cannon bastion.", "wow_he": "למה זה וואו: מבט ממפלס המים כלפי מעלה אל חומות המצודה האדירות מהמאה ה-12 כשאור הבוקר המזרחי מאיר את הקירות מעל גלי האוקיינוס המתנפצים.", "wow_en": "Why It Is WOW: Eye-level ocean perspective looking straight up at the towering 12th-century Almohad cliff walls lit by morning sun above crashing Atlantic rollers.", "enroute_he": "על הדרך: ירידה ישירה מהמדינה אל סוללת התותחים Sqala ושובר הגלים.", "enroute_en": "En-Route: Direct 10-min walk from the Medina to the Sqala artillery platform and breakwater.", "wx_he": "☀️ 20°C בבוקר: אור בוקר ישיר על המצוק.", "wx_en": "☀️ 20°C morning: Crisp ocean light.", "photo_tip": "עדשה 1x משובר הגלים לאחור אל מצוק הקסבה והאוקיינוס.", "photo_tip_en": "1x lens from the breakwater looking back at the cliff citadel rising out of the surf.", "move": "5 דק׳ הליכה רציפה לאורך סלעי החוף דרומה אל מגדלור רבאט ומבצר Borj Sirat", "move_en": "5m continuous coastal walk south along the rocks to Rabat Lighthouse & Borj Sirat"}, {"id": "d3-s2", "num": 10, "isTier1": true, "tier": "Tier 1 Anchor | 18/20 (A:5 B:4 C:5 D:4)", "name": "Phare de Rabat, בורג׳ א-סיראט ושוברי הגלים של האוקיינוס האטלנטי (Corniche de Rabat)", "name_en": "Rabat Lighthouse (1920), Borj Sirat Bastion & Crashing Atlantic Wave Ledges", "map_name": "Rabat Lighthouse Phare de Rabat", "lat": 34.0315, "lng": -6.8445, "time": "09:50 - 10:50 (60m)", "time_en": "09:50 - 10:50 (60m)", "cost_he": "חינם (0 MAD)", "cost_en": "Free (0 MAD)", "dur_he": "60 דק׳", "dur_en": "60 mins", "skip_he": "🔥 חובה - עוצמת גלי האוקיינוס מתחת לחומות האבן", "skip_en": "🔥 MUST-SEE - Raw Atlantic swell crashing against 18th-century stone bastions", "isMust": true, "in_he": "חוץ: הליכה לאורך טיילת הסלעים מהמגדלור הלבן (1920) ומבצר Borj Sirat אל חומות קסבת האודאיה.", "in_en": "Outside Coastal Walk: Walk along the rocky basalt ledges from the 1920 lighthouse and 1775 Borj Sirat bastion north toward the Udayas seawall.", "wow_he": "למה זה וואו: גלי אוקיינוס אטלנטיים עצומים מתנפצים לגובה של 5-8 מטרים של קצף לבן ישר מול מבצר האבן מהמאה ה-18 והמגדלור הלבן.", "wow_en": "Why It Is WOW: Raw Atlantic swells explode into 8-meter plumes of white spray against dark coastal reefs beneath an 18th-century stone fort and white lighthouse.", "enroute_he": "על הדרך חזרה למדינה ולאיסוף התיק מההוסטל (10:50-11:20): חוצים דרך החומה האנדלוסית ושוק Rue Souika.", "enroute_en": "En-Route back to pick up your backpack (10:50-11:20): Walk past the 17th-century Andalusian Wall.", "wx_he": "☀️ 22°C עם בריזת ים נעימה.", "wx_en": "☀️ 22°C with brisk ocean air.", "photo_tip": "עדשה 2x שמקפיאה את התנפצות הגל על סלעי הבזלת עם חומות האודאיה והמגדלור ברקע.", "photo_tip_en": "2x telephoto freezing a wave explosion against the lighthouse and ochre bastion.", "move": "איסוף תיק הגב מההוסטל -> הליכה לתחנת האוטובוס מול Gare de Rabat Ville (11:30)", "move_en": "Grab backpack -> walk to ALSA Bus AE stop outside Gare de Rabat Ville (11:30)"}, {"id": "d3-s3", "num": 11, "isTier1": false, "tier": "Tier 2 Spine | 16/20 (A:4 B:4 C:4 D:4)", "name": "Bab El Had & החומה האנדלוסית של המדינה (בדרך ל-Gare de Rabat Ville)", "name_en": "Bab El Had Monumental Gate & Andalusian Ramparts (En-Route to Rabat Ville Bus)", "map_name": "Bab El Had Rabat Morocco", "lat": 34.0209, "lng": -6.8416, "time": "11:00 - 11:25 (25m)", "time_en": "11:00 - 11:25 (25m)", "cost_he": "חינם (0 MAD)", "cost_en": "Free (0 MAD)", "dur_he": "25 דק׳", "dur_en": "25 mins", "skip_he": "⚡ על הדרך הרגלית לתחנת האוטובוס לשדה", "skip_en": "⚡ Directly on the walking path to the airport bus stop", "isMust": false, "in_he": "חוץ: מעבר מתחת לקשתות הפרסה המגולפות של שער Bab El Had מ-1197.", "in_en": "Outside: Walk through the monumental 1197 Almohad horseshoe arches of Bab El Had.", "wow_he": "למה זה וואו: שער מבוצר אדיר מאבן חול אדמדמה עם עיטורי צדפה גיאומטריים מתקופת תור הזהב האלמוהאדי.", "wow_en": "Why It Is WOW: A towering 12th-century Almohad gate carved with concentric scalloped stone arches.", "enroute_he": "על הדרך: 6 דק׳ הליכה משם לתחנת האוטובוס ב-Gare de Rabat Ville.", "enroute_en": "En-Route: 6 mins flat walk from here to Gare de Rabat Ville.", "wx_he": "☀️ 23°C.", "wx_en": "☀️ 23°C.", "photo_tip": "עדשה 1x לאורך קו הביצורים והמגדלים של החומה האנדלוסית.", "photo_tip_en": "1x shot along the crenelated ochre rampart towers.", "move": "עלייה לאוטובוס ALSA AE ב-11:30 מ-Gare de Rabat Ville לשדה RBA", "move_en": "Board ALSA Express Bus AE at 11:30 from Gare de Rabat Ville to RBA Airport"}, {"id": "d3-s4", "num": 12, "isTier1": false, "tier": "Tier 2 Spine | 18/20 (A:4 B:4 C:5 D:5)", "name": "טרמינל RBA החדש: החתמת דלפק Ryanair על הנייר המודפס (12:00) וטיסה FR163 לדבלין (14:05)", "name_en": "RBA New Glass Terminal: Mandatory Paper Boarding Pass Stamp at Ryanair Desk (12:00) & Flight FR163 (14:05)", "map_name": "Rabat Sale Airport RBA", "lat": 34.0515, "lng": -6.7515, "time": "12:00 - 14:05 (הגעה שעתיים לפני טיסה להחתמת הנייר וביקורת דרכונים)", "time_en": "12:00 - 14:05 (Arrive 2h before flight for Ryanair desk stamp & passport control)", "cost_he": "25 MAD (2.30€) באוטובוס AE (או 150 MAD במונית)", "cost_en": "25 MAD (€2.30) on ALSA Bus AE (or 150 MAD taxi)", "dur_he": "25 דק׳ נסיעה מהמרכז", "dur_en": "25 mins transit from city center", "skip_he": "🔥 חובה לוגיסטית: לגשת קודם לדלפק Ryanair להחתמת כרטיס הנייר!", "skip_en": "🔥 MANDATORY: Stop at Ryanair check-in desk first for the paper boarding pass stamp!", "isMust": true, "in_he": "פנים הטרמינל החדש: החתמת הנייר בדלפק צ׳ק-אין -> בידוק ביטחוני -> החתמת יציאה בדרכון הפורטוגלי.", "in_en": "Inside Terminal: Stamp printed boarding pass at Ryanair desk -> Security -> Exit stamp in Portuguese passport.", "wow_he": "למה זה וואו: הטרמינל החדש של רבאט משלב מעטפת זכוכית וגג גיאומטרי בהשראת מושרביות מסורתיות, והוא קומפקטי ויעיל הרבה יותר ממרקש.", "wow_en": "Why It Is WOW: Rabat’s modern terminal features a geometric mashrabiya-inspired roof canopy and smooth, stress-free queues compared to larger hubs.", "enroute_he": "אם נשאר לך מזומן בדירהם (MAD), החלף או קנה מים/קפה לפני העלייה למטוס (דירהם הוא מטבע סגור).", "enroute_en": "Spend or exchange any leftover Moroccan Dirham coins before boarding.", "wx_he": "✈️ המראה ב-14:05 -> נחיתה בדבלין ב-17:30.", "wx_en": "✈️ Depart 14:05 -> Land in Dublin at 17:30.", "photo_tip": "עדשה 0.5x באולם הנוסעים מתחת לתקרת המשולשים הגיאומטרית.", "photo_tip_en": "0.5x wide shot under the geometric roof canopy.", "move": "טיסה ישירה FR163 לדבלין (14:05 -> 17:30)", "move_en": "Direct flight FR163 to Dublin (14:05 -> 17:30)"}]}]};
+
+function switchTab(dayNum, btnEl) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btnEl.classList.add('active');
+  const target = document.getElementById('tab-day-' + dayNum);
+  if (target) target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copyTextSafe(text, onDone) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(onDone).catch(() => fallbackCopy(text, onDone));
+  } else {
+    fallbackCopy(text, onDone);
+  }
+}
+
+function fallbackCopy(text, onDone) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    if (onDone) onDone();
+  } catch (e) {
+    alert('לא ניתן להעתיק אוטומטית');
+  }
+  document.body.removeChild(ta);
+}
+
+function copySingleMap(mapName, btnEl) {
+  const text = mapName + '\n\n\n';
+  copyTextSafe(text, () => {
+    const orig = btnEl.textContent;
+    btnEl.textContent = '✅ הועתק!';
+    setTimeout(() => { btnEl.textContent = orig; }, 1500);
+  });
+}
+
+function buildWhatsAppDay(dayObj, level) {
+  if (level === 1) {
+    return dayObj.stops.map(s => s.map_name).join('\n\n\n');
+  }
+  let lines = [];
+  lines.push('🌊 *' + dayObj.title + '*');
+  lines.push('📍 ' + dayObj.subtitle);
+  lines.push('');
+  dayObj.stops.forEach(s => {
+    lines.push('━━━━━━━━━━━━━━━━━━');
+    lines.push(s.map_name);
+    lines.push('');
+    lines.push('');
+    lines.push('#' + s.num + '. [' + s.time + '] ' + s.name);
+    lines.push('🎟️ עלות: ' + (s.cost_he || '') + ' | ⏳ שהייה: ' + (s.dur_he || ''));
+    lines.push('🏛️ פנים/חוץ: ' + (s.in_he || ''));
+    lines.push('🔍 למה זה וואו: ' + (s.wow_he || ''));
+    if (level === 3) {
+      lines.push('📝 על הדרך: ' + (s.enroute_he || ''));
+      lines.push('📸 זווית צילום: ' + (s.photo_tip || ''));
+      lines.push('🚗 נסיעה: ' + (s.move || ''));
+    }
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+
+function copyDayWhatsApp(dayNum, level, btnEl) {
+  const dayObj = ITINERARY_DATA.days.find(d => String(d.day) === String(dayNum));
+  if (!dayObj) return;
+  const text = buildWhatsAppDay(dayObj, level);
+  copyTextSafe(text, () => {
+    const orig = btnEl.textContent;
+    btnEl.textContent = '✅ הועתק ללוח!';
+    setTimeout(() => { btnEl.textContent = orig; }, 2000);
+  });
+}
+
+function copyAllDaysWhatsApp() {
+  const allText = ITINERARY_DATA.days.map(d => buildWhatsAppDay(d, 2)).join('\n\n==============================\n\n');
+  copyTextSafe(allText, () => {
+    alert('כל ימי המסלול הועתקו ללוח בפורמט ווטסאפ (שמות באנגלית ל-Maps + שתי שורות רווח + תקציר מלא)!');
+  });
+}
+</script>
+</body>
+</html>
