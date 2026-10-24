@@ -280,6 +280,195 @@
     min-height: 36px;
   }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';document.head.appendChild(s);">
+let map = null;
+let currentTileMode = 'road';
+let googleRoadLayer = null;
+let googleSatLayer = null;
+let markersByDay = {};
+let allMarkers = [];
+let currentActiveDay = '1';
+let isMapExpanded = false;
+
+const DAY_COLORS = {
+  '1': '#059669',
+  '2': '#d97706',
+  '3': '#0284c7',
+  '4': '#db2777'
+};
+
+function initMobileMap() {
+  if (typeof L === 'undefined') {
+    setTimeout(initMobileMap, 200);
+    return;
+  }
+  const mapEl = document.getElementById('mobile-map');
+  if (!mapEl || map) return;
+
+  googleRoadLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+    attribution: '&copy; Google Maps',
+    maxZoom: 20
+  });
+
+  googleSatLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    attribution: '&copy; Google Satellite',
+    maxZoom: 20
+  });
+
+  map = L.map('mobile-map', {
+    layers: [googleRoadLayer],
+    zoomControl: true,
+    scrollWheelZoom: false
+  });
+
+  ITINERARY_DATA.days.forEach(d => {
+    markersByDay[d.day] = [];
+    const color = DAY_COLORS[d.day] || '#0284c7';
+    d.stops.forEach(s => {
+      if (!s.lat || !s.lng) return;
+      const pin = createCustomPin(s.num, color, s.isTier1);
+      const marker = L.marker([s.lat, s.lng], { icon: pin });
+      
+      const popupHtml = `
+        <div style="direction:rtl;text-align:right;font-family:-apple-system,BlinkMacSystemFont,sans-serif;min-width:180px;font-size:12px;">
+          <strong style="color:${color};font-size:13px;">#${s.num}. ${s.name}</strong><br>
+          <span style="color:#64748b;">⏳ ${s.time}</span><br>
+          <span style="font-weight:700;">🎟️ ${s.cost_he || 'חינם'}</span><br>
+          <div style="margin-top:6px;">
+            <a href="#card-${s.id}" onclick="scrollToCard('${s.id}')" style="color:#0284c7;font-weight:700;text-decoration:none;">⬇️ גלול לפרטי התחנה</a>
+          </div>
+        </div>
+      `;
+      marker.bindPopup(popupHtml);
+      marker.stopId = s.id;
+      marker.dayNum = d.day;
+      marker.on('click', () => {
+        scrollToCard(s.id);
+      });
+
+      markersByDay[d.day].push(marker);
+      allMarkers.push(marker);
+    });
+  });
+
+  filterMapMarkers('1');
+}
+
+function createCustomPin(num, color, isTier1) {
+  const size = isTier1 ? 30 : 26;
+  const border = isTier1 ? '3px solid #fef08a' : '2px solid #ffffff';
+  const shadow = isTier1 ? '0 3px 8px rgba(0,0,0,0.5)' : '0 2px 5px rgba(0,0,0,0.35)';
+  const html = `<div style="
+    background:${color};
+    color:#ffffff;
+    width:${size}px;
+    height:${size}px;
+    border-radius:50%;
+    border:${border};
+    box-shadow:${shadow};
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    font-size:${isTier1 ? '13px' : '11px'};
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  ">${num}</div>`;
+  return L.divIcon({
+    html: html,
+    className: 'custom-map-pin',
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -size / 2]
+  });
+}
+
+function filterMapMarkers(dayNum) {
+  if (!map) return;
+  currentActiveDay = String(dayNum);
+  
+  const badge = document.getElementById('map-day-indicator');
+  if (badge) {
+    badge.textContent = 'יום ' + dayNum;
+    badge.style.color = DAY_COLORS[dayNum] || '#0284c7';
+  }
+
+  allMarkers.forEach(m => map.removeLayer(m));
+  const activeMarkers = markersByDay[currentActiveDay] || [];
+  activeMarkers.forEach(m => map.addLayer(m));
+  fitDayBounds();
+}
+
+function fitDayBounds() {
+  if (!map) return;
+  const activeMarkers = markersByDay[currentActiveDay] || [];
+  if (activeMarkers.length === 0) return;
+  const group = L.featureGroup(activeMarkers);
+  map.fitBounds(group.getBounds(), { padding: [35, 35], maxZoom: 14 });
+}
+
+function toggleMapTiles() {
+  if (!map) return;
+  const btn = document.getElementById('btn-toggle-tiles');
+  if (currentTileMode === 'road') {
+    map.removeLayer(googleRoadLayer);
+    map.addLayer(googleSatLayer);
+    currentTileMode = 'sat';
+    if (btn) btn.textContent = '🗺️ מפה רגילה';
+  } else {
+    map.removeLayer(googleSatLayer);
+    map.addLayer(googleRoadLayer);
+    currentTileMode = 'road';
+    if (btn) btn.textContent = '🛰️ לוויין';
+  }
+}
+
+function toggleMapHeight() {
+  const mapEl = document.getElementById('mobile-map');
+  const btn = document.getElementById('btn-toggle-map-size');
+  if (!mapEl) return;
+  isMapExpanded = !isMapExpanded;
+  mapEl.style.height = isMapExpanded ? '440px' : '280px';
+  if (btn) btn.textContent = isMapExpanded ? '📐 צמצם מפה' : '📐 הגדל מפה';
+  setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+}
+
+function scrollToCard(stopId) {
+  const card = document.getElementById('card-' + stopId);
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.style.outline = '3px solid var(--primary)';
+    card.style.outlineOffset = '3px';
+    setTimeout(() => { card.style.outline = 'none'; }, 2000);
+  }
+}
+
+function focusStopOnMap(gmapsUrl, btnEl) {
+  if (!map) return;
+  const card = btnEl.closest('.stop-card');
+  if (!card) return;
+  const stopId = card.id.replace('card-', '');
+  const m = allMarkers.find(marker => marker.stopId === stopId);
+  if (m) {
+    const mapWrapper = document.querySelector('.map-card-wrapper');
+    if (mapWrapper) mapWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    map.setView(m.getLatLng(), 15, { animate: true });
+    m.openPopup();
+  }
+}
+
+const origSwitchTab = switchTab;
+switchTab = function(dayNum, btnEl) {
+  origSwitchTab(dayNum, btnEl);
+  filterMapMarkers(dayNum);
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+  initMobileMap();
+});
+
+</script>
+
 </head>
 <body>
 
@@ -292,6 +481,22 @@
     <a href="desktop.html" class="btn btn-sec">🗺️ תצוגת מפה מלאה (Desktop)</a>
   </div>
 </header>
+
+
+<div class="map-card-wrapper" style="margin-bottom:14px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card-bg);box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;">
+    <div style="font-weight:800;font-size:0.88rem;color:var(--primary);display:flex;align-items:center;gap:6px;">
+      <span>🗺️ מפת Google Maps חיה</span>
+      <span id="map-day-indicator" style="font-size:0.75rem;padding:2px 8px;border-radius:4px;background:rgba(2,132,199,0.12);color:var(--primary);font-weight:700;">יום 1</span>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button type="button" class="btn" id="btn-toggle-tiles" onclick="toggleMapTiles()" style="padding:6px 10px;font-size:0.76rem;min-height:36px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);">🛰️ לוויין</button>
+      <button type="button" class="btn" id="btn-toggle-map-size" onclick="toggleMapHeight()" style="padding:6px 10px;font-size:0.76rem;min-height:36px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);">📐 הגדל מפה</button>
+      <button type="button" class="btn" id="btn-fit-day" onclick="fitDayBounds()" style="padding:6px 10px;font-size:0.76rem;min-height:36px;background:var(--primary);color:#fff;border:none;">🎯 מרכז יום</button>
+    </div>
+  </div>
+  <div id="mobile-map" style="height:280px;width:100%;transition:height 0.25s ease;z-index:1;"></div>
+</div>
 
 <nav class="day-tabs" aria-label="ניווט לפי ימים">
   <button type="button" class="tab-btn active" onclick="switchTab('1', this)">יום 1</button>
@@ -328,7 +533,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x ממרכז הכיכר העגולה (Place du Golan) כלפי צמד הצריחים המשולשים של הקתדרלה.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> 10 דק׳ הליכה צפונה דרך המדינה ורחוב הקונסולים (Rue des Consuls) אל קסבת האודאיה</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Cathedrale+Saint+Pierre+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Cathedrale+Saint+Pierre+Rabat+Morocco', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Cathedrale+Saint+Pierre+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
     <article class="stop-card" id="card-d1-s2">
@@ -348,7 +554,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 1x ממרפסת ה-Semaphore שממסגרת את המגדלור, שוברי הגלים והעיר הלבנה של Salé מעבר לנהר.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> ירידה לנהר הבורגרג וחצייה בסירת משוטים מסורתית (2.5 MAD / 0.25€) או בטראם אל Salé</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Kasbah+of+the+Udayas+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Kasbah+of+the+Udayas+Rabat', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Kasbah+of+the+Udayas+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
     <article class="stop-card" id="card-d1-s3">
@@ -368,7 +575,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x מחלון עץ הארז בקומה השנייה כלפי מטה על בריכת השיש בחצר הפנימית.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> נסיעה של 2 תחנות בטראם (קווים T1/T2 על גשר חסן ה-2, 6 MAD) אל תחנת Place du 16 Novembre / Tour Hassan</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Medersa+Abou+El+Hassan+Sale+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Medersa+Abou+El+Hassan+Sale+Morocco', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Medersa+Abou+El+Hassan+Sale+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
     <article class="stop-card" id="card-d1-s4">
@@ -388,7 +596,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> זווית 1 (17:30): עדשה 1x נמוכה בין עמודי האבן השבורים של מגדל חסן. זווית 2 (18:35 שעה כחולה): עדשה 0.5x מטיילת הנהר שממסגרת את הקימורים של זאהה חדיד עם מגדל מוחמד ה-6 ברקע.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> טראם או 15 דק׳ הליכה חזרה למרכז רבאט</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Hassan+Tower+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Hassan+Tower+Rabat+Morocco', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Hassan+Tower+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
   </div>
@@ -422,7 +631,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x מקצה שובר הגלים המערבי שממסגרת את הצריח העצום (210m) יחד עם רסס גלי האוקיינוס.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> מונית קצרה (15 MAD, 8 דק׳) אל לב שדרות האר-דקו ו-Place Mohammed V</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Hassan+II+Mosque+Casablanca" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Hassan+II+Mosque+Casablanca', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Hassan+II+Mosque+Casablanca" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
     <article class="stop-card" id="card-d2-s2">
@@ -442,7 +652,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x מלמטה כלפי תומכות הבטון הלבנות של Sacré-Cœur מול השמיים הכחולים.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> רכבת ONCF מ-Casa Port (13:30) חזרה ל-Rabat Ville (14:25) -> מונית/הליכה ל-Chellah</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Sacre+Coeur+Cathedral+Casablanca" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Sacre+Coeur+Cathedral+Casablanca', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Sacre+Coeur+Cathedral+Casablanca" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
     <article class="stop-card" id="card-d2-s3">
@@ -462,7 +673,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 2x מהטרסה העליונה שממסגרת את הקשתות הרומיות למטה יחד עם הצריח המריני וקן החסידות.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> 15 דק׳ הליכה חזרה לשדרת Mohammed V ולכיכר המוזיאון לאמנות מודרנית (MMVI)</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Chellah+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Chellah+Rabat+Morocco', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Chellah+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
     <article class="stop-card" id="card-d2-s4">
@@ -482,7 +694,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 1x סימטרית מול הקשתות המוארות של MMVI בשעה הכחולה.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> הליכה קצרה ללינה ברבאט</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Mohammed+VI+Museum+of+Modern+and+Contemporary+Art+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Mohammed+VI+Museum+of+Modern+and+Contemporary+Art+Rabat', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Mohammed+VI+Museum+of+Modern+and+Contemporary+Art+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
   </div>
@@ -516,7 +729,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 1x משובר הגלים לאחור אל מצוק הקסבה והאוקיינוס.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> 5 דק׳ הליכה רציפה לאורך סלעי החוף דרומה אל מגדלור רבאט ומבצר Borj Sirat</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Jetee+des+Oudayas+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Jetee+des+Oudayas+Rabat', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Jetee+des+Oudayas+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
     <article class="stop-card" id="card-d3-s2">
@@ -536,7 +750,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 2x שמקפיאה את התנפצות הגל על סלעי הבזלת עם חומות האודאיה והמגדלור ברקע.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> איסוף תיק הגב מההוסטל -> הליכה לתחנת האוטובוס מול Gare de Rabat Ville (11:30)</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Rabat+Lighthouse+Phare+de+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Rabat+Lighthouse+Phare+de+Rabat', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Rabat+Lighthouse+Phare+de+Rabat" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
     <article class="stop-card" id="card-d3-s3">
@@ -556,7 +771,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 1x לאורך קו הביצורים והמגדלים של החומה האנדלוסית.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> עלייה לאוטובוס ALSA AE ב-11:30 מ-Gare de Rabat Ville לשדה RBA</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Bab+El+Had+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Bab+El+Had+Rabat+Morocco', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Bab+El+Had+Rabat+Morocco" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
     <article class="stop-card" id="card-d3-s4">
@@ -576,7 +792,8 @@
       <div class="photo-tip">📸 <strong>זווית צילום מומלצת:</strong> עדשה 0.5x באולם הנוסעים מתחת לתקרת המשולשים הגיאומטרית.</div>
       <div class="transit-tip">🚗 <strong>נסיעה/מעבר:</strong> טיסה ישירה FR163 לדבלין (14:05 -> 17:30)</div>
       <div class="stop-links">
-        <a href="https://www.google.com/maps/search/?api=1&query=Rabat+Sale+Airport+RBA" target="_blank" class="link-pill" rel="noopener">📍 פתח ב-Google Maps</a>
+        <button type="button" class="link-pill" onclick="focusStopOnMap('https://www.google.com/maps/search/?api=1&query=Rabat+Sale+Airport+RBA', this)" style="background:var(--card-bg);cursor:pointer;border:1px solid var(--primary);color:var(--primary);">🗺️ הצג במפה החיה</button>
+        <a href="https://www.google.com/maps/search/?api=1&query=Rabat+Sale+Airport+RBA" target="_blank" class="link-pill" rel="noopener">📍 פתח באפליקציית Google Maps</a>
       </div>
     </article>
   </div>
