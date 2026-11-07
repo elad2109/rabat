@@ -1382,7 +1382,7 @@ const ITINERARY_DATA = {
           "tier": "Tier 2 Spine | 18/20 (G:4 E:5 V:4 T:3 L:2)",
           "name": "Jetée de Rabat & חומות הים התחתונות של קסבת האודאיה (שובר הגלים האטלנטי במפגש הנהר והאוקיינוס)",
           "name_en": "Jetée de Rabat & Lower Sea Bastions of the Udayas (Atlantic Breakwater Pier at River Mouth)",
-          "map_name": "Jetee des Oudayas Rabat",
+          "map_name": "Digue des Oudayas Rabat",
           "lat": 34.0345,
           "lng": -6.8385,
           "time": "08:45 - 09:45 (60m)",
@@ -2095,7 +2095,7 @@ function renderItinerary() {
       const skipBorder = stop.isMust ? '#f59e0b' : '#38bdf8';
       const photoPrefix = isEn ? '📸 Smartphone Angle: ' : '📸 זווית סמארטפון: ';
       const listenLabel = isEn ? '🔊 Listen' : '🔊 קריין';
-      const gimgLink = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(stop.map_name + ' architecture');
+      const gimgLink = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(stop.map_name);
       const gmapsLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(stop.map_name);
       const badgeClass = stop.isTier1 ? 'badge badge-t1' : 'badge badge-t2';
       const cardClass = stop.isTier1 ? 'stop-card tier-1' : 'stop-card tier-2';
@@ -2402,7 +2402,7 @@ function updateMapMarkers() {
       const sWow = isEn ? stop.wow_en : stop.wow_he;
       const sPhoto = isEn ? stop.photo_tip_en : stop.photo_tip;
       const sMove = isEn ? stop.move_en : stop.move;
-      const gimgLink = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(stop.map_name + ' architecture');
+      const gimgLink = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(stop.map_name);
       const gmapsLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(stop.map_name);
 
       const marker = L.marker(coord, { icon }).bindPopup(`
